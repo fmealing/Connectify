@@ -1,21 +1,27 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Correct import from react-router-dom
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Hero from "./components/Home/Hero";
-import Features from "./components/Home/Features";
-import UserTestimonials from "./components/Home/UserTestimonials";
-import FinalCTA from "./components/Home/FinalCTA";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import "./styles/main.scss";
 
 const App: React.FC = () => {
   return (
-    <div>
-      <Navbar />
-      <Hero />
-      <Features />
-      <UserTestimonials />
-      <FinalCTA />
-      <Footer />
-    </div>
+    <Router>
+      {/* Ensure that Router wraps the entire component structure */}
+      <div>
+        <Navbar />
+        {/* Set up routes */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
