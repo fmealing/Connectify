@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faKey } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faKey,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -19,11 +25,11 @@ const Login: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen">
       {/* Left side: Form and heading */}
-      <div className="flex flex-1 justify-center items-center bg-white px-8">
+      <div className="flex flex-1 justify-center items-center bg-background px-8">
         <div className="w-full max-w-6xl mx-auto">
           {/* Heading */}
           <div className="mb-8">
-            <h1 className="text-h1 font-bold text-center mb-2 font-heading">
+            <h1 className="text-h1 font-bold text-center mb-2 font-heading text-text">
               Welcome back to Connectify
             </h1>
             <p className="text-[28px] text-center text-text font-['Playfair']">
@@ -36,12 +42,12 @@ const Login: React.FC = () => {
             {/* Google Sign-in Button */}
             <button
               type="button"
-              className="flex items-center justify-center w-full border border-gray-400 py-2 rounded-md mb-6 hover:bg-gray-100 transition"
+              className="flex items-center justify-center w-full border border-gray-400 py-4 rounded-full mb-6 hover:bg-gray-100 transition"
             >
               <img
                 src="/svg/google-icon.svg" // Use Google icon as an image
                 alt="Google"
-                className="mr-2 w-5 h-5"
+                className="mr-2 w-8 h-8"
               />
               <span className="text-base font-medium text-gray-700 font-inter leading-tight">
                 Login with Google
@@ -58,24 +64,31 @@ const Login: React.FC = () => {
             </div>
 
             {/* Email Input */}
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label className="block text-sm font-bold mb-2" htmlFor="email">
                 Email
               </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter your email"
-                required
-              />
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className="absolute left-4 top-4 text-secondary"
+                  size="lg"
+                />
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="shadow-md appearance-none border rounded-full w-full py-4 px-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
             </div>
 
             {/* Password Input with Eye Icon */}
             <div className="mb-4 relative">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-4">
                 <label className="block text-sm font-bold" htmlFor="password">
                   Password
                 </label>
@@ -86,26 +99,35 @@ const Login: React.FC = () => {
                   Forgot password?
                 </a>
               </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter your password"
-                required
-              />
-              <FontAwesomeIcon
-                icon={showPassword ? faEyeSlash : faEye}
-                onClick={handleTogglePassword}
-                className="absolute right-3 top-9 cursor-pointer text-gray-500"
-              />
+
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className="absolute left-4 top-4 text-secondary"
+                  size="lg"
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="shadow-md appearance-none border rounded-full w-full py-4 px-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter your password"
+                  required
+                />
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  onClick={handleTogglePassword}
+                  className="absolute right-4 top-4 cursor-pointer text-gray-500"
+                  size="lg"
+                />
+              </div>
             </div>
 
             {/* Sign-in Button */}
             <button
               type="submit"
-              className="w-full bg-accent text-white py-2 px-4 rounded-md flex items-center justify-center hover:bg-accent-dark transition"
+              className="mt-14 w-full bg-accent text-white py-4 px-8 rounded-full flex items-center justify-center hover:bg-accent-dark transition"
             >
               <FontAwesomeIcon icon={faKey} className="mr-2" />
               Sign In
@@ -115,8 +137,7 @@ const Login: React.FC = () => {
       </div>
 
       {/* Right side: Image */}
-      <div className="flex-1 bg-cover bg-center hidden md:block bg-login">
-        {/* div as a Black overlay at 50% opacity */}
+      <div className="flex-1 bg-cover bg-center hidden md:block bg-login relative">
         <div className="bg-text bg-opacity-50 h-full" />
       </div>
     </div>
