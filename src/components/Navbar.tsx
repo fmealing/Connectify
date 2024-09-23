@@ -8,7 +8,7 @@ import {
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="bg-background text-text px-10 py-4 flex justify-between items-center">
+    <nav className="bg-background text-text px-10 py-4 flex justify-between items-center border-b-2 border-gray-300">
       {/* Logo */}
       <a href="/">
         <img
