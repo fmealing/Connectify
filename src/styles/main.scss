@@ -1,6 +1,9 @@
 // Imports
 @import "swiper/swiper-bundle.css";
 
+// Variables
+$background: #f7f8fa;
+
 // Global reset
 * {
   margin: 0;
@@ -13,4 +16,33 @@
   background-image: url("/images/login-bg.jpg");
   background-size: cover;
   background-position: center;
+}
+
+// Profile styles
+.profile-page {
+  background-color: $background;
+  min-height: 100vh;
+}
+
+.profile-info {
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.profile-picture {
+  .profile-picture {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 9999px;
+    object-fit: cover;
+  }
+}
+
+.profile-details {
+  flex: 1;
 }

@@ -5,7 +5,9 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Profile from "./pages/Profile";
 import "./styles/main.scss";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +20,15 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer />
       </div>

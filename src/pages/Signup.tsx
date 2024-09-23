@@ -7,13 +7,18 @@ import {
   faEnvelope,
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -23,9 +28,25 @@ const Signup: React.FC = () => {
     setShowRepeatPassword(!showRepeatPassword);
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add signup logic here
+
+    // Check if passwords match
+    if (password !== repeatPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:5001/api/auth/signup", {
+        email,
+        username,
+        password,
+      });
+      navigate("/login");
+    } catch (error) {
+      setError("Signup failed. Try again.");
+    }
   };
 
   return (
@@ -66,6 +87,39 @@ const Signup: React.FC = () => {
                   required
                 />
               </div>
+              {error && (
+                <p className="text-red-500 text-sm font-medium mb-4 text-center">
+                  {error}
+                </p>
+              )}
+            </div>
+
+            {/* Username input with Icon */}
+            <div className="mb-4 relative">
+              <label className="block text-sm font-bold" htmlFor="username">
+                Username
+              </label>
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faUserPlus}
+                  className="absolute left-4 top-4 text-secondary"
+                  size="lg"
+                />
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="shadow-md appearance-none border rounded-full w-full py-4 px-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter your username"
+                  required
+                />
+              </div>
+              {error && (
+                <p className="text-red-500 text-sm font-medium mb-4 text-center">
+                  {error}
+                </p>
+              )}
             </div>
 
             {/* Password Input with Icon */}
@@ -95,6 +149,11 @@ const Signup: React.FC = () => {
                   size="lg"
                 />
               </div>
+              {error && (
+                <p className="text-red-500 text-sm font-medium mb-4 text-center">
+                  {error}
+                </p>
+              )}
             </div>
 
             {/* Repeat Password Input with Icon */}
@@ -127,6 +186,11 @@ const Signup: React.FC = () => {
                   size="lg"
                 />
               </div>
+              {error && (
+                <p className="text-red-500 text-sm font-medium mb-4 text-center">
+                  {error}
+                </p>
+              )}
             </div>
 
             {/* Signup Button */}

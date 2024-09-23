@@ -7,19 +7,42 @@ import {
   faKey,
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
+import { instance as axios } from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Logging in...");
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("/login", {
+        email,
+        password,
+      });
+
+      const token = response.data.token; // Assuming token is returned
+      localStorage.setItem("authToken", token); // Save token to local storage
+
+      setLoading(false);
+
+      navigate("/profile"); // Redirect to a protected route after login
+    } catch (error) {
+      setError("Login failed. Please check your credentials.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,12 +150,28 @@ const Login: React.FC = () => {
             {/* Sign-in Button */}
             <button
               type="submit"
-              className="mt-14 w-full bg-accent text-white py-4 px-8 rounded-full flex items-center justify-center hover:bg-accent-dark transition"
+              disabled={loading} // Disable while loading
+              className={`mt-14 w-full bg-accent text-white py-4 px-8 rounded-full flex items-center justify-center transition ${
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-accent-dark"
+              }`}
             >
-              <FontAwesomeIcon icon={faKey} className="mr-2" />
-              Sign In
+              {loading ? (
+                <div className="spinner">Loading...</div>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faKey} className="mr-2" />
+                  Sign In
+                </>
+              )}
             </button>
           </form>
+          {error && (
+            <p className="text-red-500 text-sm font-medium mb-4 text-center">
+              {error}
+            </p>
+          )}
         </div>
       </div>
 

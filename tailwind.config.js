@@ -4,9 +4,12 @@ module.exports = {
     extend: {
       colors: {
         primary: "#6A0DAD", // Primary Color
+        "primary-dark": "#5A0BA0", // Primary Dark Color
         accent: "#FF6F61", // Accent Color
+        "accent-dark": "cc594e", // Accent Dark Color
         background: "#F7F8FA", // Background Color
         secondary: "#2BD9A8", // Secondary Color
+        "secondary-light": "#bff4e5", // Secondary Light Color
         text: "#333333", // Text Color
       },
       fontFamily: {
