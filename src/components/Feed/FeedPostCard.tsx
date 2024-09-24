@@ -29,7 +29,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   };
 
   return (
-    <div className="bg-background shadow-md rounded-lg overflow-hidden w-full max-w-sm h-[400px] flex flex-col">
+    <div className="bg-background shadow-md rounded-lg overflow-hidden w-full h-[400px] flex flex-col">
       {/* Post Image */}
       <div
         className="w-full h-48 bg-cover bg-center"

@@ -12,6 +12,7 @@ import PasswordReset from "./pages/PasswordReset";
 import Feed from "./pages/Feed";
 import Messaging from "./pages/Messaging";
 import UserProfilePage from "./pages/UserProfile";
+import SearchResultsPage from "./pages/SearchResults";
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
           <Route path="/feed" element={<Feed />} />
           <Route path="/messaging" element={<Messaging />} />
           <Route path="/user-profile" element={<UserProfilePage />} />
+          <Route path="/search-result" element={<SearchResultsPage />} />
         </Routes>
         <Footer />
       </div>
