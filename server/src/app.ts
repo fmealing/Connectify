@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes"; // Import authentication routes
+import postRoutes from "./routes/postRoutes"; // Import post routes
+import messageRoutes from "./routes/messageRoutes"; // Import message routes
 
 dotenv.config(); // Load environment variables
 
@@ -14,6 +16,8 @@ app.use(express.json()); // Parse incoming JSON requests
 
 // Routes
 app.use("/api/auth", authRoutes); // Authentication routes
+app.use("/api/posts", postRoutes); // Post routes
+app.use("/api/messages", messageRoutes); // Message routes
 
 // MongoDB connection
 const mongoUri = process.env.MONGO_URI as string;

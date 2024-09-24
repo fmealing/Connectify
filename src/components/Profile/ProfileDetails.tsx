@@ -33,7 +33,6 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
           className="font-body text-text w-full md:w-3/4 border rounded-full px-4 py-3 shadow-md focus:outline-none focus:ring-2 focus:ring-primary transition"
         />
       </div>
-
       {/* Username */}
       <div className="mb-6">
         <label className="font-body text-text block text-sm font-semibold mb-2">
@@ -46,7 +45,6 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
           className="font-body text-text w-full md:w-3/4 border rounded-full px-4 py-3 shadow-md focus:outline-none focus:ring-2 focus:ring-primary transition"
         />
       </div>
-
       {/* Bio */}
       <div className="mb-6">
         <label className="font-body text-text block text-sm font-semibold mb-2">
