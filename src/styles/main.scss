@@ -46,3 +46,10 @@ $background: #f7f8fa;
 .profile-details {
   flex: 1;
 }
+
+// Password-reset background
+.bg-password-reset {
+  background-image: url("/images/password-reset-bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
