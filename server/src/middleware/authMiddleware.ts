@@ -8,6 +8,7 @@ export const authenticate = (
   next: NextFunction
 ) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
+
   if (!token) {
     return res
       .status(401)
@@ -16,6 +17,7 @@ export const authenticate = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+
     (req as any).user = decoded; // Attach the decode token data to the request object
     next();
   } catch (error) {
