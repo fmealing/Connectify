@@ -1,10 +1,42 @@
 import { Request, Response } from "express";
-import User from "../models/User"; // Import the User model
+import User from "../models/User";
+import jwt from "jsonwebtoken";
 
-//1. Login Controller
+// User Registration (Sign Up)
+export const signup = async (req: Request, res: Response) => {
+  try {
+    const { fullName, email, password } = req.body;
+
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "User with this email already exists" });
+    }
+
+    // Create a new user instance
+    const newUser = new User({
+      fullName,
+      email,
+      passwordHash: password, // automatically hashed before saving
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error registering user", error: err.message });
+  }
+};
+
+// User Login
 export const login = async (req: Request, res: Response) => {
   try {
-    // Extract email and password from the request body
     const { email, password } = req.body;
 
     // Check if the user exists in the database
@@ -15,45 +47,64 @@ export const login = async (req: Request, res: Response) => {
 
     // Check if the provided password matches the hashed password
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
+    if (isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
     // Generate a JWT token
-    const token = user.generateAuthToken();
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1h" }
+    );
 
     // Respond with the token
-    return res.status(200).json({ token });
+    res.status(200).json({ token });
   } catch (error) {
-    // Handle any errors
-    return res.status(500).json({ message: "Error logging in", error });
+    const err = error as Error;
+    res.status(500).json({ message: "Error logging in", error: err.message });
   }
 };
 
-// 1. Signup Controller
-export const signup = async (req: Request, res: Response) => {
+export const getUserProfile = async (req: Request, res: Response) => {
   try {
-    // Extract user data from the request body
-    const { username, email, password } = req.body;
+    const userId = (req as any).user.id; // Extract the user id from the request
 
-    // Check if a user already exists with the same email or username
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User with this email already exists" });
+    // Fetch user details from the database
+    const user = await User.findById(userId).select("-passwordHash"); // Exclude the password hash from the response
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // 2. Create a new user instance
-    const newUser = new User({ username, email, password });
-
-    // 3. Save the user in the database
-    await newUser.save();
-
-    // Respond with a success message
-    return res.status(201).json({ message: "USer registered successfully" });
+    res.status(200).json(user);
   } catch (error) {
-    // Handle errors and respond with an error message
-    res.status(500).json({ message: "Error creating user", error });
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error fetching user profile", error: err.message });
+  }
+};
+
+export const updateUserProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id; // Get the authenticated user's ID
+
+    // Update the user's profile information
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { ...req.body }, // Update only the fields provided in the body
+      { new: true, runValidators: true }
+    ).select("-passwordHash"); // Exclude the password hash from the response
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error updating profile", error: err.message });
   }
 };

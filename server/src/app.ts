@@ -2,22 +2,17 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authRoutes"; // Import authentication routes
-import postRoutes from "./routes/postRoutes"; // Import post routes
-import messageRoutes from "./routes/messageRoutes"; // Import message routes
+import authRoutes from "./routes/authRoutes";
 
-dotenv.config(); // Load environment variables
+// Load environment variables from a .env file
+dotenv.config();
 
-const app = express(); // Create an instance of Express
+// create express app
+const app = express();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(express.json()); // Parse incoming JSON requests
-
-// Routes
-app.use("/api/auth", authRoutes); // Authentication routes
-app.use("/api/posts", postRoutes); // Post routes
-app.use("/api/messages", messageRoutes); // Message routes
+app.use(cors());
+app.use(express.json());
 
 // MongoDB connection
 const mongoUri = process.env.MONGO_URI as string;
@@ -26,8 +21,14 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Failed to connect to MongoDB", err));
 
+// Define routes
+app.use("/api/users", authRoutes);
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 // Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });

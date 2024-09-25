@@ -1,69 +1,88 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
-// 1. Define the TypeScript interface for the User Document
+// Define the User interface for TypeScript
 export interface IUser extends Document {
-  username: string;
+  fullName: string;
   email: string;
-  password: string;
-  generateAuthToken(): string; // Method to generate JWT
+  passwordHash: string;
+  profilePicture: string;
+  bio: string;
+  posts: mongoose.Types.ObjectId[];
+  friends: mongoose.Types.ObjectId[];
+  followers: mongoose.Types.ObjectId[];
+  following: mongoose.Types.ObjectId[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// 2. Create the User schema
+// Create the User schema
 const UserSchema: Schema = new Schema(
   {
-    username: {
+    fullName: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
     },
-    password: {
+    passwordHash: {
       type: String,
       required: true,
     },
+    profilePicture: {
+      type: String,
+      default: "",
+    },
+    bio: {
+      type: String,
+      default: "",
+    },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true, // Adds createdAt and updatedAt fields
   }
 );
 
-// 3. Hash the password before saving the user
+// Hash the password before saving the user
 UserSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+  if (!this.isModified("passwordHash")) return next();
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
   next();
 });
 
-// 4. Method to compare passwords
-UserSchema.methods.comparePassword = async function (
+// Method to compare passwords
+UserSchema.methods.comparePassword = function (
   candidatePassword: string
-) {
-  return bcrypt.compare(candidatePassword, this.password);
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
-// Method to generate JWT
-UserSchema.methods.generateAuthToken = function () {
-  // Create a token with user id and email, valid for 1 hour
-  const token = jwt.sign(
-    { _id: this._id, email: this.email },
-    process.env.JWT_SECRET as string, // Use JWT secret from .env
-    {
-      expiresIn: "1h",
-    }
-  );
-  return token;
-};
-
-// 5. Export the User model
 const User = mongoose.model<IUser>("User", UserSchema);
 export default User;
