@@ -5,20 +5,27 @@ import jwt from "jsonwebtoken";
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, username } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
+    const existingUsername = await User.findOne({ username });
+
     if (existingUser) {
       return res
         .status(400)
         .json({ message: "User with this email already exists" });
     }
 
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
     // Create a new user instance
     const newUser = new User({
       fullName,
       email,
+      username,
       passwordHash: password, // automatically hashed before saving
     });
 
@@ -38,6 +45,7 @@ export const signup = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
 
     // Check if the user exists in the database
     const user = await User.findOne({ email });
@@ -47,7 +55,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Check if the provided password matches the hashed password
     const isMatch = await user.comparePassword(password);
-    if (isMatch) {
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 

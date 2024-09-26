@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 export interface IUser extends Document {
   fullName: string;
   email: string;
+  username: string;
   passwordHash: string;
   profilePicture: string;
   bio: string;
@@ -23,6 +24,11 @@ const UserSchema: Schema = new Schema(
       required: true,
     },
     email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    username: {
       type: String,
       required: true,
       unique: true,
@@ -78,10 +84,12 @@ UserSchema.pre<IUser>("save", async function (next) {
 });
 
 // Method to compare passwords
-UserSchema.methods.comparePassword = function (
+UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.passwordHash);
+  const isMatch = await bcrypt.compare(candidatePassword, this.passwordHash);
+  console.log("Password Comparison Result: ", isMatch); // Log comparison result
+  return isMatch;
 };
 
 const User = mongoose.model<IUser>("User", UserSchema);

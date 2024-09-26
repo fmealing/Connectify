@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import interactionRoutes from "./routes/interactionRoutes";
+import followRoutes from "./routes/followRoutes";
 
 // Load environment variables from a .env file
 dotenv.config();
@@ -27,6 +29,9 @@ mongoose
 app.use("/api/users", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/interactions", interactionRoutes);
+app.use("/api/follow", followRoutes);
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });

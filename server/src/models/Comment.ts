@@ -6,6 +6,7 @@ export interface IComment extends Document {
   user: mongoose.Types.ObjectId; // User who created the comment
   content: string; // Content of the comment
   parentComment?: mongoose.Types.ObjectId; // Reference to a parent comment (for replies)
+  likes: mongoose.Types.ObjectId[]; // Array of users who liked the comment
 }
 
 // Create the Comment schema
@@ -19,6 +20,7 @@ const CommentSchema: Schema = new Schema(
       ref: "Comment",
       default: null,
     },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields

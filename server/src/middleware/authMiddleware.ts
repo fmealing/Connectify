@@ -17,7 +17,7 @@ export const authenticate = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-
+    console.log("Decoded user ID", decoded); // This is correct
     (req as any).user = decoded; // Attach the decode token data to the request object
     next();
   } catch (error) {
