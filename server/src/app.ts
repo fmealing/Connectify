@@ -7,6 +7,7 @@ import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import interactionRoutes from "./routes/interactionRoutes";
 import followRoutes from "./routes/followRoutes";
+import messageRoutes from "./routes/messageRoutes";
 
 // Load environment variables from a .env file
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
+app.use("/api/conversations", messageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
