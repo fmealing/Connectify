@@ -4,21 +4,20 @@ import jwt from "jsonwebtoken";
 
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
+  console.log("Signup request received");
   try {
     const { fullName, email, password, username } = req.body;
+    console.log("signup details", { fullName, email, password, username });
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     const existingUsername = await User.findOne({ username });
 
     if (existingUser) {
+      console.log("User with this email already exists");
       return res
         .status(400)
         .json({ message: "User with this email already exists" });
-    }
-
-    if (existingUsername) {
-      return res.status(400).json({ message: "Username already taken" });
     }
 
     // Create a new user instance
@@ -28,12 +27,15 @@ export const signup = async (req: Request, res: Response) => {
       username,
       passwordHash: password, // automatically hashed before saving
     });
+    console.log("Creating new user: ", newUser);
 
     // Save the user to the database
     await newUser.save();
+    console.log("User registered successfully", newUser);
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
+    console.error("Error registering user", error);
     const err = error as Error;
     res
       .status(500)

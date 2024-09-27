@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/login", {
+      const response = await axios.post("users/login", {
         email,
         password,
       });

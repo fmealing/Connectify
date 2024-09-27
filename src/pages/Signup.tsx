@@ -11,6 +11,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +39,8 @@ const Signup: React.FC = () => {
     }
 
     try {
-      await axios.post("http://localhost:5001/api/auth/signup", {
+      await axios.post("http://localhost:5001/api/users/signup", {
+        fullName,
         email,
         username,
         password,
@@ -87,11 +89,28 @@ const Signup: React.FC = () => {
                   required
                 />
               </div>
-              {error && (
-                <p className="text-red-500 text-sm font-medium mb-4 text-center">
-                  {error}
-                </p>
-              )}
+            </div>
+
+            {/* Full Name with Icon */}
+            <div className="mb-4 relative">
+              <label className="block text-sm font-bold" htmlFor="fullName">
+                Full Name
+              </label>
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faUserPlus}
+                  className="absolute left-4 top-4 text-secondary"
+                  size="lg"
+                />
+                <input
+                  type="text"
+                  id="fullName"
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="shadow-md appearance-none border rounded-full w-full py-4 px-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
             </div>
 
             {/* Username input with Icon */}
@@ -115,11 +134,6 @@ const Signup: React.FC = () => {
                   required
                 />
               </div>
-              {error && (
-                <p className="text-red-500 text-sm font-medium mb-4 text-center">
-                  {error}
-                </p>
-              )}
             </div>
 
             {/* Password Input with Icon */}
@@ -149,11 +163,6 @@ const Signup: React.FC = () => {
                   size="lg"
                 />
               </div>
-              {error && (
-                <p className="text-red-500 text-sm font-medium mb-4 text-center">
-                  {error}
-                </p>
-              )}
             </div>
 
             {/* Repeat Password Input with Icon */}

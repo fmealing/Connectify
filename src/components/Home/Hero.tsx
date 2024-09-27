@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
         {/* CTA Button */}
         <div className="h-16 px-8 bg-primary rounded-lg justify-center items-center gap-3 inline-flex">
           <a
-            href="/"
+            href="/signup"
             className="text-center text-white text-xl font-medium font-body leading-tight flex items-center gap-3"
           >
             Start Connecting
