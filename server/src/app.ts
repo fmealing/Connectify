@@ -8,6 +8,7 @@ import commentRoutes from "./routes/commentRoutes";
 import interactionRoutes from "./routes/interactionRoutes";
 import followRoutes from "./routes/followRoutes";
 import messageRoutes from "./routes/messageRoutes";
+import imageRoutes from "./routes/imageRoutes";
 
 // Load environment variables from a .env file
 dotenv.config();
@@ -33,6 +34,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
+app.use("/api/images", imageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
