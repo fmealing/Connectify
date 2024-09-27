@@ -67,6 +67,7 @@ export const login = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
+    console.log("Generated JWT token", token);
 
     // Respond with the token
     res.status(200).json({ token });

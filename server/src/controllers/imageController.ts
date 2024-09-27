@@ -7,10 +7,6 @@ import dotenv from "dotenv";
 // Load environment variables
 dotenv.config();
 
-console.log("project id", process.env.GCLOUD_PROJECT_ID);
-console.log("key file", process.env.GCLOUD_APPLICATION_CREDENTIALS);
-console.log("bucket name", process.env.GCLOUD_BUCKET_NAME);
-
 // Initialize Google Cloud Storage instance
 const storage = new Storage({
   projectId: process.env.GCLOUD_PROJECT_ID,
@@ -40,9 +36,10 @@ export const uploadImage = async (req: Request, res: Response) => {
         .json({ message: "Error uploading file", error: err.message });
     });
 
-    blobStream.on("finish", () => {
-      // construct the public URL of the uploaded file
+    blobStream.on("finish", async () => {
+      // Use the blob.name to correctly define the image URL
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
       res
         .status(200)
         .json({ message: "File uploaded successfully", url: publicUrl });

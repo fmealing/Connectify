@@ -1,13 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/swiper-bundle.css"; // Import Swiper styles
+import "swiper/swiper-bundle.css";
 import ProfilePostCard from "./ProfilePostCard";
-import { Navigation, Pagination } from "swiper/modules"; // Import necessary Swiper modules
+import { Navigation, Pagination } from "swiper/modules";
 
-const PostCarousel: React.FC = () => {
+interface Post {
+  _id: string;
+  imageUrl: string;
+  content: string;
+  createdAt: string;
+}
+
+interface PostCarouselProps {
+  posts: Post[];
+}
+
+const PostCarousel: React.FC<PostCarouselProps> = ({ posts: initialPosts }) => {
+  const [posts, setPosts] = useState(initialPosts);
+
+  // Handle updating a post's data in the carousel
+  const handlePostUpdate = (
+    postId: string,
+    updatedPost: { content: string; imageUrl: string }
+  ) => {
+    // Update the posts state locally
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              content: updatedPost.content,
+              imageUrl: updatedPost.imageUrl,
+            }
+          : post
+      )
+    );
+  };
+
+  const handlePostDelete = (postId: string) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
+
   return (
     <div className="post-carousel my-8">
-      {/* Swiper Carousel */}
       <Swiper
         spaceBetween={30}
         slidesPerView={1}
@@ -15,65 +50,28 @@ const PostCarousel: React.FC = () => {
         pagination={{ clickable: true }}
         modules={[Navigation, Pagination]}
         breakpoints={{
-          640: {
-            slidesPerView: 1,
-          },
-          768: {
-            slidesPerView: 2,
-          },
-          1024: {
-            slidesPerView: 3,
-          },
+          640: { slidesPerView: 1 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
         }}
         className="max-w-5xl mx-auto"
       >
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-1.jpg"
-            textContent="What a beauty!! Wish I was back there again"
-            date="Posted on: 23rd September 2024"
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-2.jpg"
-            textContent="This is my Pug Frodo. He was feeling in a goofy mood, but after all this is just test data"
-            date="Posted on: 22nd September 2024"
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-3.jpg"
-            textContent="Another image of my Pug Frodo. He is looking more cute than ever, so I thought I'd share. Also, I want to test longer, so this is really quite nonsensical , but necessary for testing."
-            date="Posted on: 21st September 2024"
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-4.jpg"
-            textContent="Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque deserunt error voluptas, atque voluptate deleniti cupiditate aperiam numquam eos omnis."
-            date="Posted on: 20th September 2024"
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-4.jpg"
-            textContent="Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque deserunt error voluptas, atque voluptate deleniti cupiditate aperiam numquam eos omnis."
-            date="Posted on: 19th September 2024"
-          />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <ProfilePostCard
-            imageSrc="images/posts/post-4.jpg"
-            textContent="Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque deserunt error voluptas, atque voluptate deleniti cupiditate aperiam numquam eos omnis."
-            date="Posted on: 18th September 2024"
-          />
-        </SwiperSlide>
+        {posts.map((post) => (
+          <SwiperSlide key={post._id}>
+            <ProfilePostCard
+              postId={post._id}
+              imageSrc={post.imageUrl}
+              textContent={post.content}
+              date={`Posted on: ${new Date(
+                post.createdAt
+              ).toLocaleDateString()}`}
+              onUpdate={(updatedPost) =>
+                handlePostUpdate(post._id, updatedPost)
+              }
+              onDelete={handlePostDelete}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

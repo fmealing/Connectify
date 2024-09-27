@@ -1,19 +1,73 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faTimes } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 const CreatePostCard: React.FC = () => {
   const [postContent, setPostContent] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handlePublish = () => {
-    console.log("Post Published:", postContent, image);
+  const handlePublish = async () => {
+    setLoading(true);
+    try {
+      let uploadedImageUrl = null;
+
+      // Step 1: If an image is uploaded, first upload the image to Google Cloud Storage
+      if (imageUrl) {
+        const formData = new FormData();
+        formData.append("image", imageUrl); // Add the image file to FormData
+
+        const imageUploadResponse = await axios.post(
+          "http://localhost:5001/api/images/upload", // Your image upload endpoint
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        uploadedImageUrl = imageUploadResponse.data.url; // Get the uploaded image URL
+        console.log("Image uploaded successfully:", uploadedImageUrl);
+      }
+
+      // Step 2: Create the post by sending the content and the image URL (if uploaded)
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "http://localhost:5001/api/posts/create", // Post creation endpoint
+        {
+          content: postContent,
+          imageUrl: uploadedImageUrl,
+          videoUrl: null,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Send token for authentication
+          },
+        }
+      );
+
+      setPostContent(""); // Reset content
+      setImageUrl(null); // Reset image
+      setIsModalOpen(false); // Close modal if open
+      setLoading(false);
+
+      // Show success toast notification
+      toast.success("Post uploaded successfully!");
+    } catch (error) {
+      console.error("Error creating post:", error);
+      setLoading(false);
+      toast.error("Error creating post.");
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      setImageUrl(e.target.files[0]);
       setIsModalOpen(true); // Open modal when an image is uploaded
     }
   };
@@ -43,8 +97,9 @@ const CreatePostCard: React.FC = () => {
         <button
           className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primary-dark transition"
           onClick={handlePublish}
+          disabled={loading} // Disable button when loading
         >
-          Publish
+          {loading ? "Publishing..." : "Publish"}
         </button>
 
         <label
@@ -64,7 +119,7 @@ const CreatePostCard: React.FC = () => {
       </div>
 
       {/* Image Modal */}
-      {isModalOpen && image && (
+      {isModalOpen && imageUrl && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="relative bg-white rounded-lg overflow-hidden shadow-lg max-w-3xl max-h-[80vh] flex items-center justify-center">
             {/* Close Button */}
@@ -77,13 +132,16 @@ const CreatePostCard: React.FC = () => {
 
             {/* Image Preview */}
             <img
-              src={URL.createObjectURL(image)}
+              src={URL.createObjectURL(imageUrl)}
               alt="Preview"
               className="max-w-full max-h-full rounded-md"
             />
           </div>
         </div>
       )}
+
+      {/* Add ToastContainer to display notifications */}
+      <ToastContainer />
     </div>
   );
 };

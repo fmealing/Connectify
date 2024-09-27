@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import ProfilePicture from "../components/Profile/ProfilePicture";
 import ProfileDetails from "../components/Profile/ProfileDetails";
 import ProfileButtons from "../components/Profile/ProfileButtons";
 import PostCarousel from "../components/Profile/PostCarousel";
+import axios from "axios"; // Import axios for HTTP requests
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+  id: string; // This depends on how your JWT token is structured (usually 'id' or 'sub')
+}
 
 const Profile: React.FC = () => {
   const [name, setName] = useState("Florian Mealing");
@@ -12,9 +18,52 @@ const Profile: React.FC = () => {
     "Passionate about coding and building cool projects."
   );
   const [followers, setFollowers] = useState(69);
+  const [posts, setPosts] = useState([]); // State to hold posts
+  const [loading, setLoading] = useState(true); // Loading state for fetching posts
+  const [error, setError] = useState<string | null>(null); // Error state for fetching posts
 
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
+
+  // Decode the token to get the userId
+  let userId: string | null = null;
+  try {
+    if (token) {
+      const decodedToken = jwtDecode<DecodedToken>(token); // Ensure the DecodedToken type matches your JWT payload
+      userId = decodedToken.id; // Extract the user ID or other info from the decoded token
+    }
+  } catch (error) {
+    console.error("Error decoding token", error);
+  }
+
+  // Fetch posts when the component loads
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!userId) {
+        setError("User ID not found.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/posts/user/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setPosts(response.data); // Set posts data
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching posts.");
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [userId, token]);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken"); // Remove token from local storage
@@ -59,7 +108,15 @@ const Profile: React.FC = () => {
         </h2>
         {/* Optional Separator */}
         <hr className="border-t border-text mb-8" />
-        <PostCarousel />
+
+        {/* Display posts */}
+        {loading ? (
+          <p>Loading posts...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          <PostCarousel posts={posts} /> // Pass the fetched posts to PostCarousel
+        )}
       </div>
     </div>
   );

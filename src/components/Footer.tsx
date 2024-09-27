@@ -1,4 +1,3 @@
-import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebook,
@@ -13,34 +12,42 @@ const Footer = () => {
       {/* Social Media Icons */}
       <div className="flex justify-center space-x-6 mb-4">
         <a
-          href="https://facebook.com"
+          href="https://linkedin.com/in/florian-mealing"
           aria-label="Facebook"
           className="text-2xl"
           style={{ color: "#4267B2" }} // Facebook's official color
+          target="_blank" // Open in new tab
+          rel="noreferrer" // Security measure
         >
           <FontAwesomeIcon icon={faFacebook} size="xl" />
         </a>
         <a
-          href="https://twitter.com"
+          href="https://linkedin.com/in/florian-mealing"
           aria-label="Twitter"
           className="text-2xl"
           style={{ color: "#1DA1F2" }} // Twitter's official color
+          target="_blank" // Open in new tab
+          rel="noreferrer" // Security measure
         >
           <FontAwesomeIcon icon={faTwitter} size="xl" />
         </a>
         <a
-          href="https://instagram.com"
+          href="https://linkedin.com/in/florian-mealing"
           aria-label="Instagram"
           className="text-2xl"
           style={{ color: "#E1306C" }} // Instagram's official color
+          target="_blank" // Open in new tab
+          rel="noreferrer" // Security measure
         >
           <FontAwesomeIcon icon={faInstagram} size="xl" />
         </a>
         <a
-          href="https://linkedin.com"
+          href="https://linkedin.com/in/florian-mealing"
           aria-label="LinkedIn"
           className="text-2xl"
           style={{ color: "#0077B5" }} // LinkedIn's official color
+          target="_blank" // Open in new tab
+          rel="noreferrer" // Security measure
         >
           <FontAwesomeIcon icon={faLinkedin} size="xl" />
         </a>

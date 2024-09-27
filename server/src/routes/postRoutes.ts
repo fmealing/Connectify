@@ -5,8 +5,10 @@ import {
   editPost,
   getAllPosts,
   getPostById,
+  getPostsByUser,
 } from "../controllers/postController";
 import { authenticate } from "../middleware/authMiddleware";
+import { imageUploadMiddleware } from "../controllers/imageController";
 
 const router = express.Router();
 
@@ -20,9 +22,12 @@ router.get("/", getAllPosts);
 router.get("/:postId", getPostById);
 
 // Edit a specific post (Protected route)
-router.put("/:postId", authenticate, editPost);
+router.put("/:postId", authenticate, imageUploadMiddleware, editPost);
 
 // Delete a specific post (Protected route)
 router.delete("/:postId", authenticate, deletePost);
+
+// Get all posts by a specific user
+router.get("/user/:userId", getPostsByUser);
 
 export default router;

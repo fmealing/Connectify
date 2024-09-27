@@ -5,12 +5,38 @@ import {
   faEnvelope,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Function to handle the profile click
+  const handleProfileClick = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/profile"); // Redirect to profile if logged in
+    } else {
+      navigate("/login"); // Redirect to login if not logged in
+    }
+  };
+
+  const isLoggedIn = localStorage.getItem("authToken") !== null;
+
+  const handleLogoClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (isLoggedIn) {
+      navigate("/feed"); // Redirect to feed if logged in
+    } else {
+      navigate("/"); // Redirect to home if not logged in
+    }
+  };
+
   return (
     <nav className="bg-background text-text px-10 py-4 flex justify-between items-center shadow-md">
       {/* Logo */}
-      <a href="/">
+      <a href="/" onClick={handleLogoClick}>
         <img
           src="/svg/logo-no-background.svg"
           alt="Connectify Logo"
@@ -41,7 +67,10 @@ const Navbar: React.FC = () => {
         </li>
 
         {/* Profile Link */}
-        <li className="h-12 px-4 bg-accent rounded-full flex items-center justify-center gap-2 hover:bg-accent-dark transition duration-200 ease-in-out">
+        <li
+          className="h-12 px-4 bg-accent rounded-full flex items-center justify-center gap-2 hover:bg-accent-dark transition duration-200 ease-in-out"
+          onClick={handleProfileClick}
+        >
           <a href="/profile" className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faUser} className="text-white" />
             <p className="text-white text-base font-medium font-inter leading-tight">
