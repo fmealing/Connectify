@@ -1,45 +1,34 @@
+import { useEffect, useState } from "react";
 import CreatePostCard from "../components/Feed/CreatePostCard";
 import FeedPostCard from "../components/Feed/FeedPostCard";
+import axios from "axios";
+
+// Post interface
+interface Post {
+  user: string; // User who created the post
+  content: string; // Text content of the post
+  imageUrl?: string; // Optional image URL
+  videoUrl?: string; // Optional video URL
+  comments: string[]; // Array of comment IDs
+  likes: string[]; // Array of users who liked the post
+  createdAt: string; // Post creation date
+}
 
 const Feed = () => {
-  const posts = [
-    {
-      imageSrc: "images/posts/post-1.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "24-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-2.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "23-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-3.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "22-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-4.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "21-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-5.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "20-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-6.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "19-09-2024",
-    },
-  ];
+  const [posts, setPosts] = useState<Post[]>([]); // State to hold posts
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5001/api/posts");
+        console.log(response.data); // Log the response data
+        setPosts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <div>
@@ -58,22 +47,11 @@ const Feed = () => {
             {posts.map((post, index) => (
               <FeedPostCard
                 key={index}
-                imageSrc={post.imageSrc}
-                textContent={post.textContent}
-                date={post.date}
+                imageSrc={post.imageUrl || "/images/avatars/avatar-1.jpg"}
+                textContent={post.content}
+                date={post.createdAt}
               />
             ))}
-          </div>
-
-          {/* Pagination */}
-          <div className="pagination flex justify-center items-center mt-10 mb-5 gap-4">
-            <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition">
-              Previous
-            </button>
-            <span className="text-text font-body">Page 1 of 5</span>
-            <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition">
-              Next
-            </button>
           </div>
         </div>
       </>

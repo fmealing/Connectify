@@ -8,7 +8,6 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import "./styles/main.scss";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PasswordReset from "./pages/PasswordReset";
 import Feed from "./pages/Feed";
 import Messaging from "./pages/Messaging";
 import UserProfilePage from "./pages/UserProfile";
@@ -31,14 +30,6 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/password-reset"
-            element={
-              <ProtectedRoute>
-                <PasswordReset />
               </ProtectedRoute>
             }
           />

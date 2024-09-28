@@ -5,6 +5,7 @@ import ChatInput from "../components/Messaging/ChatInput";
 import StartConversationForm from "../components/Messaging/StartConversationForm"; // Import the form
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 interface User {
   id: number;
@@ -42,11 +43,31 @@ const MessagingPage: React.FC = () => {
     ]);
   };
 
-  const handleSendMessage = (message: string) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: Date.now(), sender: "Me", content: message, timestamp: "Now" },
-    ]);
+  const handleSendMessage = async (message: string) => {
+    if (!selectedUser) return;
+
+    try {
+      const response = await axios.post(
+        `/conversation/${selectedUser.id}/messages`,
+        {
+          content: message,
+        }
+      );
+
+      const { data } = response;
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: data.messageData.id,
+          sender: "Me",
+          content: message,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
   };
 
   const handleLeaveChat = () => {

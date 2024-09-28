@@ -1,11 +1,11 @@
+import React, { useState } from "react";
 import { faCommentDots, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
 
 interface FeedPostCardProps {
-  imageSrc: string;
+  imageSrc?: string; // Use imageSrc as prop name
   textContent: string;
-  date: string;
+  date: string; // ISO date string
 }
 
 const FeedPostCard: React.FC<FeedPostCardProps> = ({
@@ -19,7 +19,6 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
     ? textContent.slice(0, maxLength) + "..."
     : textContent;
 
-  // State to manage likes
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
 
@@ -28,30 +27,35 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
     setLikesCount((prevCount) => (liked ? prevCount - 1 : prevCount + 1));
   };
 
+  // Format the date
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div className="bg-background shadow-md rounded-lg overflow-hidden w-full h-[400px] flex flex-col">
-      {/* Post Image */}
-      <div
-        className="w-full h-48 bg-cover bg-center"
-        style={{ backgroundImage: `url(${imageSrc})` }}
-      ></div>
+      {imageSrc ? (
+        <div
+          className="w-full h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${imageSrc})` }}
+        ></div>
+      ) : (
+        <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+          <span className="text-gray-500">No Image Available</span>
+        </div>
+      )}
 
-      {/* Post Text */}
       <div className="font-body p-4 flex-1 flex flex-col justify-between">
-        {/* Date */}
-        <p className="text-sm text-gray-500 mb-2">{date}</p>
-
-        {/* Post Text */}
+        <p className="text-sm text-gray-500 mb-2">{formattedDate}</p>
         <p
           className="text-base text-text mb-4 overflow-hidden text-ellipsis"
           style={{ maxHeight: "120px" }}
         >
           {displayedText}
         </p>
-
-        {/* Like & Comment Buttons */}
         <div className="flex items-center justify-between">
-          {/* Like Button */}
           <button
             onClick={handleLike}
             className={`flex items-center gap-2 text-sm ${
@@ -63,8 +67,6 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
               {likesCount} {likesCount == 1 ? "Like" : "Likes"}
             </span>
           </button>
-
-          {/* Comment Button */}
           <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary">
             <FontAwesomeIcon icon={faCommentDots} size="xl" />
             <span>Comment</span>

@@ -51,14 +51,16 @@ export const createPost = async (req: Request, res: Response) => {
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find()
-      .populate("user", "fullName profilePicture") // Populate user details
+      .populate("user", "fullName profilePicture")
       .populate({
         path: "comments",
-        populate: { path: "user", select: "fullName" }, // Populate comment user details
+        populate: { path: "user", select: "fullName" },
       })
       .exec();
 
-    res.status(200).json(posts);
+    console.log(posts); // Log the posts to see if it's an array
+
+    res.status(200).json(posts || []); // Ensure posts is an array
   } catch (error) {
     const err = error as Error;
     res

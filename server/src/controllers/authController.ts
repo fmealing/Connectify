@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
+import axios from "axios";
 
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
@@ -111,5 +114,80 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: "Error updating profile", error: err.message });
+  }
+};
+
+export const requestResetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    // Find the user with the provided email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a token and expiration date
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const tokenExpiration = Date.now() + 3600000; // 1 hour
+
+    // Save the token and expiration date to the user's document
+    (user as any).resetPasswordToken = resetToken;
+    (user as any).resetPasswordExpires = tokenExpiration;
+
+    await user.save();
+
+    // Create the reset URL
+    const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const message = `You have requested a password reset. Please click the following link to reset your password: ${resetUrl}`;
+
+    // Submit the form data to Formspree
+    const formData = {
+      email: user.email, // Recipient's email
+      message, // The email body containing the reset link
+    };
+
+    // Formspree endpoint
+    const formEndpoint = "https://formspree.io/f/xgvwgkbn";
+
+    await axios.post(formEndpoint, formData);
+
+    res.status(200).json({ message: "Password reset link sent to your email" });
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error resetting password", error: err.message });
+  }
+};
+
+// Reset Password
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Find the user by the reset token and check if the token is still valid
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    // Hash the new password and save it
+    const salt = await bcrypt.genSalt(10);
+    (user as any).password = await bcrypt.hash(newPassword, salt);
+    (user as any).resetPasswordToken = undefined;
+    (user as any).resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error resetting password", error: err.message });
   }
 };
