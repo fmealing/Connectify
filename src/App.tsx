@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Correct import from react-router-dom
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -34,10 +34,38 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/password-reset" element={<PasswordReset />} />
-          <Route path="/feed" element={<Feed />} />
-          <Route path="/messaging" element={<Messaging />} />
-          <Route path="/user-profile" element={<UserProfilePage />} />
+          <Route
+            path="/password-reset"
+            element={
+              <ProtectedRoute>
+                <PasswordReset />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messaging"
+            element={
+              <ProtectedRoute>
+                <Messaging />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-profile"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/search-result" element={<SearchResultsPage />} />
         </Routes>
         <Footer />

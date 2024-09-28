@@ -7,29 +7,34 @@ import mongoose from "mongoose";
 // Start a new conversation
 export const createConversation = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
+    console.log("Participants: ", req.body.participants);
+
     const { participants } = req.body;
 
-    if (!participants || participants.length < 2) {
+    if (!participants) {
+      console.log("A conversation requires at least two participants");
       return res
         .status(400)
         .json({ message: "A conversation requires at least two participants" });
     }
 
-    // Check if the users exist
-    for (let participantId of participants) {
-      const user = await User.findById(participantId);
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: `User with ID ${participantId} not found` });
-      }
+    const userId = (req as any).user?.id;
+    console.log("User ID: ", userId);
+
+    // Find the second user by their username (sent from frontend)
+    const secondUser = await User.findOne({ username: participants[0] });
+    console.log("Second User: ", secondUser);
+    if (!secondUser) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Create the conversation
+    // Create the conversation with the authenticated user and the found user
     const newConversation = new Conversation({
-      participants,
+      participants: [userId, secondUser._id],
     });
 
+    // Save the conversation to the database
     await newConversation.save();
 
     res

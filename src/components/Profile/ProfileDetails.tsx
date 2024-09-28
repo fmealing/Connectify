@@ -59,6 +59,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
       </div>
 
       {/* Follower Count */}
+      {/* TODO: Implement this (full stack) */}
       <div className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-800">
         <div className="bg-primary text-white rounded-full w-8 h-8 flex justify-center items-center shadow-md">
           <span className="font-bold">{followers}</span>

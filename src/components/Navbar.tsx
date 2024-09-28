@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
       <ul className="hidden md:flex space-x-6 font-body">
         {/* Messages Link */}
         <li className="h-12 px-4 rounded-full border border-primary flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition duration-200 ease-in-out">
-          <a href="/messages" className="flex gap-2 items-center">
+          <a href="/messaging" className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faEnvelope} className="text-primary" />
             <p className="text-primary text-base font-medium font-inter leading-tight">
               Messages

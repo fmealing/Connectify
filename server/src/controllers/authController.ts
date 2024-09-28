@@ -4,10 +4,8 @@ import jwt from "jsonwebtoken";
 
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
-  console.log("Signup request received");
   try {
     const { fullName, email, password, username } = req.body;
-    console.log("signup details", { fullName, email, password, username });
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -27,11 +25,9 @@ export const signup = async (req: Request, res: Response) => {
       username,
       passwordHash: password, // automatically hashed before saving
     });
-    console.log("Creating new user: ", newUser);
 
     // Save the user to the database
     await newUser.save();
-    console.log("User registered successfully", newUser);
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -47,7 +43,6 @@ export const signup = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    console.log(email, password);
 
     // Check if the user exists in the database
     const user = await User.findOne({ email });
@@ -67,7 +62,6 @@ export const login = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
-    console.log("Generated JWT token", token);
 
     // Respond with the token
     res.status(200).json({ token });
