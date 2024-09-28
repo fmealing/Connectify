@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { faCommentDots, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 
+interface Comment {
+  _id: string;
+  content: string;
+  user: { fullName: string };
+  createdAt: string;
+}
+
 interface FeedPostCardProps {
-  postId: string; // Pass the postId to identify the post
+  postId: string;
   imageSrc?: string;
   textContent: string;
-  date: string; // ISO date string
-  initialLikesCount: number; // Initialize the number of likes
-  initiallyLiked: boolean; // Determine if the post is already liked
+  date: string;
+  initialLikesCount: number;
+  initiallyLiked: boolean;
+  initialComments: Comment[];
 }
 
 const FeedPostCard: React.FC<FeedPostCardProps> = ({
@@ -19,6 +27,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   date,
   initialLikesCount,
   initiallyLiked,
+  initialComments = [],
 }) => {
   const maxLength = 100;
   const isTextTruncated = textContent.length > maxLength;
@@ -28,33 +37,27 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
 
   const [liked, setLiked] = useState(initiallyLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [newComment, setNewComment] = useState<string>("");
+  const [showComments, setShowComments] = useState(false); // Toggle visibility for comments
 
+  // Handle post like/unlike
   const handleLike = async () => {
     try {
       const authToken = localStorage.getItem("authToken");
 
       if (liked) {
-        // Unlike post
         await axios.post(
           "http://localhost:5001/api/interactions/posts/unlike",
-          { postId }, // Request body
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`, // Pass the token in headers
-            },
-          }
+          { postId },
+          { headers: { Authorization: `Bearer ${authToken}` } }
         );
         setLikesCount((prevCount) => prevCount - 1);
       } else {
-        // Like post
         await axios.post(
           "http://localhost:5001/api/interactions/posts/like",
-          { postId }, // Request body
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`, // Pass the token in headers
-            },
-          }
+          { postId },
+          { headers: { Authorization: `Bearer ${authToken}` } }
         );
         setLikesCount((prevCount) => prevCount + 1);
       }
@@ -65,6 +68,31 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
     }
   };
 
+  // Handle comment creation
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      const authToken = localStorage.getItem("authToken");
+
+      const response = await axios.post(
+        "http://localhost:5001/api/comments/create",
+        { postId, content: newComment },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+
+      setComments((prevComments) => [...prevComments, response.data.comment]);
+      setNewComment(""); // Reset input field
+    } catch (error) {
+      console.error("Error submitting comment", error);
+    }
+  };
+
+  // Toggle comments visibility
+  const handleCommentToggle = () => {
+    setShowComments(!showComments);
+  };
+
   // Format the date
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
@@ -72,8 +100,23 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
     day: "numeric",
   });
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/comments/${postId}`
+        );
+        setComments(response.data.comments);
+      } catch (error) {
+        console.error("Error fetching comments", error);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
+
   return (
-    <div className="bg-background shadow-md rounded-lg overflow-hidden w-full h-[400px] flex flex-col">
+    <div className="bg-background shadow-md rounded-lg overflow-hidden w-full h-auto flex flex-col">
       {imageSrc ? (
         <div
           className="w-full h-48 bg-cover bg-center"
@@ -93,6 +136,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
         >
           {displayedText}
         </p>
+
         <div className="flex items-center justify-between">
           <button
             onClick={handleLike}
@@ -105,11 +149,57 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
               {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </span>
           </button>
-          <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary">
+          <button
+            onClick={handleCommentToggle}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary"
+          >
             <FontAwesomeIcon icon={faCommentDots} size="xl" />
             <span>Comment</span>
           </button>
         </div>
+
+        {/* Display Comments Section */}
+        {showComments && (
+          <div className="mt-4">
+            {/* Add Comment Form - Above the existing comments */}
+            <div className="mb-4">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="w-full border rounded px-2 py-1"
+                placeholder="Add a comment..."
+              />
+              <button
+                onClick={handleCommentSubmit}
+                className="bg-primary text-white px-4 py-2 rounded mt-2"
+              >
+                Submit
+              </button>
+            </div>
+
+            {/* Existing Comments */}
+            <h3 className="text-sm text-gray-500 mb-2">Comments</h3>
+            <ul className="space-y-2">
+              {comments.map((comment) => (
+                <li key={comment._id} className="bg-gray-100 p-2 rounded">
+                  <div className="flex justify-between">
+                    <p className="text-xs text-gray-400">
+                      {new Date(comment.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <p className="text-sm">{comment.content}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -15,10 +15,13 @@ export const createComment = async (
 ) => {
   try {
     const { postId, content, parentCommentId } = req.body;
+    console.log("Request body: ", req.body);
     const userId = (req as any).user.id;
+    console.log("User ID", userId);
 
     // Check if the post exists
     const post = await Post.findById(postId);
+    console.log("Post: ", post);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -30,6 +33,7 @@ export const createComment = async (
       content,
       parentComment: parentCommentId || null,
     });
+    console.log("New Comment: ", newComment);
 
     // Save the comment to the database
     await newComment.save();
@@ -40,6 +44,8 @@ export const createComment = async (
     // Add the comment to the post's comments array
     post.comments.push(commentId);
     await post.save();
+
+    console.log("Updated Post Comments: ", post.comments);
 
     res
       .status(201)
