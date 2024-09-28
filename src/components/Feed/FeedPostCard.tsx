@@ -1,17 +1,24 @@
 import React, { useState } from "react";
 import { faCommentDots, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 
 interface FeedPostCardProps {
-  imageSrc?: string; // Use imageSrc as prop name
+  postId: string; // Pass the postId to identify the post
+  imageSrc?: string;
   textContent: string;
   date: string; // ISO date string
+  initialLikesCount: number; // Initialize the number of likes
+  initiallyLiked: boolean; // Determine if the post is already liked
 }
 
 const FeedPostCard: React.FC<FeedPostCardProps> = ({
+  postId,
   imageSrc,
   textContent,
   date,
+  initialLikesCount,
+  initiallyLiked,
 }) => {
   const maxLength = 100;
   const isTextTruncated = textContent.length > maxLength;
@@ -19,12 +26,43 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
     ? textContent.slice(0, maxLength) + "..."
     : textContent;
 
-  const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(initiallyLiked);
+  const [likesCount, setLikesCount] = useState(initialLikesCount);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikesCount((prevCount) => (liked ? prevCount - 1 : prevCount + 1));
+  const handleLike = async () => {
+    try {
+      const authToken = localStorage.getItem("authToken");
+
+      if (liked) {
+        // Unlike post
+        await axios.post(
+          "http://localhost:5001/api/interactions/posts/unlike",
+          { postId }, // Request body
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Pass the token in headers
+            },
+          }
+        );
+        setLikesCount((prevCount) => prevCount - 1);
+      } else {
+        // Like post
+        await axios.post(
+          "http://localhost:5001/api/interactions/posts/like",
+          { postId }, // Request body
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Pass the token in headers
+            },
+          }
+        );
+        setLikesCount((prevCount) => prevCount + 1);
+      }
+
+      setLiked(!liked);
+    } catch (error) {
+      console.error("Error liking/unliking post", error);
+    }
   };
 
   // Format the date
@@ -64,7 +102,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
           >
             <FontAwesomeIcon icon={faHeart} size="xl" />
             <span>
-              {likesCount} {likesCount == 1 ? "Like" : "Likes"}
+              {likesCount} {likesCount === 1 ? "Like" : "Likes"}
             </span>
           </button>
           <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary">
