@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Post from "../models/Post";
 
 // Hashtag Search
-export const searchHastags = async (req: Request, res: Response) => {
+export const searchHashtags = async (req: Request, res: Response) => {
   try {
     const { search } = req.query; // Extract search query
     const searchRegex = new RegExp(search as string, "i"); // Case-insensitive search

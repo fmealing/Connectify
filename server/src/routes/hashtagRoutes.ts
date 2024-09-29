@@ -1,9 +1,9 @@
 import express from "express";
-import { searchHastags } from "../controllers/hashtagController";
+import { searchHashtags } from "../controllers/hashtagController";
 
 const router = express.Router();
 
 // Hashtag Search
-router.get("/search/hashtags", searchHastags);
+router.get("/search/hashtags", searchHashtags);
 
 export default router;

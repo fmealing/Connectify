@@ -23,14 +23,14 @@ interface FeedPostCardProps {
 const FeedPostCard: React.FC<FeedPostCardProps> = ({
   postId,
   imageSrc,
-  content,
-  date,
-  initialLikesCount,
-  initiallyLiked,
+  content = "",
+  date = "",
+  initialLikesCount = 0,
+  initiallyLiked = false,
   initialComments = [],
 }) => {
   const maxLength = 100;
-  const isTextTruncated = content.length > maxLength;
+  const isTextTruncated = content?.length > maxLength;
   const displayedText = isTextTruncated
     ? content.slice(0, maxLength) + "..."
     : content;

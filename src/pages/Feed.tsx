@@ -67,7 +67,7 @@ const Feed = () => {
               key={index}
               postId={post._id} // Pass the post ID
               imageSrc={post.imageUrl}
-              textContent={post.content}
+              content={post.content}
               date={post.createdAt}
               initialLikesCount={post.likes.length} // Pass the number of likes
               initiallyLiked={userId ? post.likes.includes(userId) : false} // Check if the post is already liked by the user

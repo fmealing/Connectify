@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
 
   // Function to handle the profile click
   const handleProfileClick = () => {
@@ -33,6 +34,14 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // Function to handle the search input and redirect to the search results page
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search-result?query=${searchQuery}`); // Redirect to the search results page with the query
+    }
+  };
+
   return (
     <nav className="bg-background text-text px-10 py-4 flex justify-between items-center shadow-md">
       {/* Logo */}
@@ -44,15 +53,20 @@ const Navbar: React.FC = () => {
         />
       </a>
 
-      {/* Search Bar with cohesive border and outline */}
-      <div className="hidden md:flex items-center bg-white border border-gray-300 rounded-full w-1/2 h-12 px-5 shadow-sm transition duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary">
+      {/* Search Bar */}
+      <form
+        onSubmit={handleSearchSubmit} // Handle search form submit
+        className="hidden md:flex items-center bg-white border border-gray-300 rounded-full w-1/2 h-12 px-5 shadow-sm transition duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary"
+      >
         <FontAwesomeIcon icon={faSearch} className="text-gray-500 text-lg" />
         <input
           type="text"
-          placeholder="Search user"
+          placeholder="Search for posts, profiles, or hashtags"
           className="bg-white pl-3 pr-4 py-2 text-base text-gray-700 w-full rounded-full focus:outline-none"
+          value={searchQuery} // Bind to state
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query state
         />
-      </div>
+      </form>
 
       {/* Navigation Links */}
       <ul className="hidden md:flex space-x-6 font-body">
@@ -80,7 +94,7 @@ const Navbar: React.FC = () => {
         </li>
       </ul>
 
-      {/* Mobile Menu Icon (for future implementation) */}
+      {/* Mobile Menu Icon */}
       <div className="md:hidden">
         {/* Add hamburger icon here for mobile */}
       </div>
