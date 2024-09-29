@@ -36,10 +36,6 @@ app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
 app.use("/api/images", imageRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 // Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {

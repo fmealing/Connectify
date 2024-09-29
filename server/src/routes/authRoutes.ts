@@ -13,6 +13,7 @@ import {
   getFollowing,
   getUserById,
 } from "../controllers/userController";
+import { imageUploadMiddleware } from "../controllers/imageController";
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.post("/login", login);
 router.get("/profile", authenticate, getUserProfile);
 
 // Update user profile (protected route)
-router.put("/profile", authenticate, updateUserProfile);
+router.put("/profile", authenticate, imageUploadMiddleware, updateUserProfile);
 
 // Get all users
 router.get("/", getAllUsers);

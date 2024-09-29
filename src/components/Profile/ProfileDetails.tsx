@@ -2,23 +2,33 @@ import React from "react";
 
 interface ProfileDetailsProps {
   name: string;
-  setName: React.Dispatch<React.SetStateAction<string>>;
   username: string;
-  setUsername: React.Dispatch<React.SetStateAction<string>>;
   bio: string;
-  setBio: React.Dispatch<React.SetStateAction<string>>;
   followers: number;
+  onUpdate: (updatedFields: {
+    fullName?: string;
+    username?: string;
+    bio?: string;
+  }) => void;
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   name,
-  setName,
   username,
-  setUsername,
   bio,
-  setBio,
   followers,
+  onUpdate,
 }) => {
+  const handleUpdate = (field: string, value: string) => {
+    if (field === "fullName") {
+      onUpdate({ fullName: value });
+    } else if (field === "username") {
+      onUpdate({ username: value });
+    } else if (field === "bio") {
+      onUpdate({ bio: value });
+    }
+  };
+
   return (
     <div className="profile-details flex-1">
       {/* Name */}
@@ -29,10 +39,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => handleUpdate("fullName", e.target.value)} // Use onChange for real-time updates
           className="font-body text-text w-full md:w-3/4 border rounded-full px-4 py-3 shadow-md focus:outline-none focus:ring-2 focus:ring-primary transition"
         />
       </div>
+
       {/* Username */}
       <div className="mb-6">
         <label className="font-body text-text block text-sm font-semibold mb-2">
@@ -41,10 +52,11 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
         <input
           type="text"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => handleUpdate("username", e.target.value)} // Use onChange
           className="font-body text-text w-full md:w-3/4 border rounded-full px-4 py-3 shadow-md focus:outline-none focus:ring-2 focus:ring-primary transition"
         />
       </div>
+
       {/* Bio */}
       <div className="mb-6">
         <label className="font-body text-text block text-sm font-semibold mb-2">
@@ -52,14 +64,13 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
         </label>
         <textarea
           value={bio}
-          onChange={(e) => setBio(e.target.value)}
+          onChange={(e) => handleUpdate("bio", e.target.value)} // Use onChange
           className="font-body text-text w-full md:w-3/4 border rounded-lg px-4 py-3 shadow-md focus:outline-none focus:ring-2 focus:ring-primary transition"
           rows={3}
         />
       </div>
 
       {/* Follower Count */}
-      {/* TODO: Implement this (full stack) */}
       <div className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-800">
         <div className="bg-primary text-white rounded-full w-8 h-8 flex justify-center items-center shadow-md">
           <span className="font-bold">{followers}</span>

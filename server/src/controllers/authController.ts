@@ -1,14 +1,25 @@
 import { Request, Response } from "express";
+import { Storage } from "@google-cloud/storage";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import axios from "axios";
+import dotenv from "dotenv";
+
+// load the environment variables
+dotenv.config();
+
+const storage = new Storage({
+  projectId: process.env.GCLOUD_PROJECT_ID,
+  keyFilename: process.env.GCLOUD_APPLICATION_CREDENTIALS,
+});
+const bucket = storage.bucket("connectify-images");
 
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { fullName, email, password, username } = req.body;
+    const { fullName, email, username, password } = req.body;
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -74,6 +85,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+// Get User Profile
 export const getUserProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id; // Extract the user id from the request
@@ -93,22 +105,68 @@ export const getUserProfile = async (req: Request, res: Response) => {
   }
 };
 
+// Update User Profile
 export const updateUserProfile = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id; // Get the authenticated user's ID
+    const userId = (req as any).user?.id; // Get the authenticated user's ID
+    console.log("User ID: ", userId);
 
-    // Update the user's profile information
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { ...req.body }, // Update only the fields provided in the body
-      { new: true, runValidators: true }
-    ).select("-passwordHash"); // Exclude the password hash from the response
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not logged in" });
     }
 
-    res.status(200).json(updatedUser);
+    let imageUrl = req.body.profilePicture;
+
+    // Check if a file is present in the request
+    if (req.file) {
+      const file = req.file;
+      const blob = bucket.file(`${Date.now()}_${file.originalname}`);
+      const blobStream = blob.createWriteStream({
+        resumable: false,
+        gzip: true,
+      });
+
+      blobStream.on("error", (err) => {
+        console.error("Error uploading file", err);
+        return res.status(500).json({ message: "Error uploading file" });
+      });
+
+      blobStream.on("finish", async () => {
+        // Construct the public URL of the uploaded image
+        imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        console.log("Image URL updated to: ", imageUrl);
+
+        // Update the user's profile picture after the file is uploaded
+        const updatedUser = await User.findByIdAndUpdate(
+          userId,
+          { profilePicture: imageUrl, ...req.body },
+          { new: true, runValidators: true }
+        ).select("-passwordHash");
+
+        if (!updatedUser) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json(updatedUser);
+      });
+
+      blobStream.end(file.buffer); // Upload the file
+    } else {
+      // Handle profile updates without file upload
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { ...req.body },
+        { new: true, runValidators: true }
+      ).select("-passwordHash");
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json(updatedUser); // Respond with the updated user
+    }
   } catch (error) {
     const err = error as Error;
     res
@@ -117,6 +175,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
   }
 };
 
+// Change Password
 export const requestResetPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;

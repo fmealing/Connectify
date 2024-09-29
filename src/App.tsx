@@ -21,15 +21,14 @@ const App: React.FC = () => {
         <Navbar />
         {/* Set up routes */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
+          <Route path="/" element={<Home />} /> {/* Completed ✅ */}
+          <Route path="/login" element={<Login />} /> {/* Completed ✅ */}
+          <Route path="/signup" element={<Signup />} /> {/* Completed ✅ */}
           <Route
             path="/profile"
             element={
               <ProtectedRoute>
-                <Profile />
+                <Profile /> {/* Completed ✅ */}
               </ProtectedRoute>
             }
           />
@@ -37,7 +36,7 @@ const App: React.FC = () => {
             path="/feed"
             element={
               <ProtectedRoute>
-                <Feed />
+                <Feed /> {/* Completed ✅ */}
               </ProtectedRoute>
             }
           />
@@ -45,7 +44,8 @@ const App: React.FC = () => {
             path="/messaging"
             element={
               <ProtectedRoute>
-                <Messaging />
+                <Messaging />{" "}
+                {/* Will use external API for this. Just gives me too many headaches*/}
               </ProtectedRoute>
             }
           />
