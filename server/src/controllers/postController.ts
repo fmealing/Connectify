@@ -224,3 +224,40 @@ export const getPostsByUser = async (req: Request, res: Response) => {
       .json({ message: "Error fetching posts", error: err.message });
   }
 };
+
+// Search all posts
+export const getPosts = async (req: Request, res: Response) => {
+  try {
+    const { search } = req.query; // Extract search query
+    console.log("Search query", search); // Log the search query
+
+    let posts;
+    if (search) {
+      const searchRegex = new RegExp(search as string, "i"); // Case-insensitive search
+      posts = await Post.find({ content: { $regex: searchRegex } })
+        .populate("user", "fullName profilePicture")
+        .populate({
+          path: "comments",
+          populate: { path: "user", select: "fullName" },
+        })
+        .exec();
+      console.log("Posts if search exists", posts); // Log the posts to see if it's an array
+    } else {
+      posts = await Post.find()
+        .populate("user", "fullName profilePicture")
+        .populate({
+          path: "comments",
+          populate: { path: "user", select: "fullName" },
+        })
+        .exec();
+      console.log("Posts if search doesn't exist", posts); // Log the posts to see if it's an array
+    }
+
+    res.status(200).json(posts || []);
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error fetching posts", error: err.message });
+  }
+};

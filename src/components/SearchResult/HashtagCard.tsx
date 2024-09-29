@@ -7,11 +7,9 @@ interface HashtagCardProps {
 
 const HashtagCard: React.FC<HashtagCardProps> = ({ name, postCount }) => {
   return (
-    <div className="bg-secondary-light shadow-md rounded-lg p-4 flex items-center">
-      <div>
-        <h3 className="text-lg font-bold">{name}</h3>
-        <p className="text-sm text-gray-500">{postCount} Posts</p>
-      </div>
+    <div className="hashtag-card bg-secondary-light p-4 rounded-md shadow-md">
+      <h3 className="text-lg font-semibold">{name}</h3>
+      <p className="text-gray-700">{postCount} posts</p>
     </div>
   );
 };

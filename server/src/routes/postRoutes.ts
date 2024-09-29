@@ -5,6 +5,7 @@ import {
   editPost,
   getAllPosts,
   getPostById,
+  getPosts,
   getPostsByUser,
 } from "../controllers/postController";
 import { authenticate } from "../middleware/authMiddleware";
@@ -17,6 +18,9 @@ router.post("/create", authenticate, createPost);
 
 // Get all posts
 router.get("/", getAllPosts);
+
+// Search all posts
+router.get("/search/posts", getPosts);
 
 // Get post by id
 router.get("/:postId", getPostById);

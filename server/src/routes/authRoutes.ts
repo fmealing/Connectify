@@ -12,6 +12,7 @@ import {
   getFollowers,
   getFollowing,
   getUserById,
+  getUsers,
 } from "../controllers/userController";
 import { imageUploadMiddleware } from "../controllers/imageController";
 
@@ -31,6 +32,9 @@ router.put("/profile", authenticate, imageUploadMiddleware, updateUserProfile);
 
 // Get all users
 router.get("/", getAllUsers);
+
+// Search all users
+router.get("/search/users", getUsers);
 
 // Get a single user by ID
 router.get("/:userId", getUserById);

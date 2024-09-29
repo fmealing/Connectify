@@ -14,17 +14,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   followers,
 }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 flex items-center">
-      <img
-        src={avatar}
-        alt={name}
-        className="w-12 h-12 rounded-full object-cover mr-4"
-      />
-      <div>
-        <h3 className="text-lg font-bold">{name}</h3>
-        <p className="text-sm text-gray-500">@{username}</p>
-        <p className="text-sm text-gray-500">{followers} Followers</p>
-      </div>
+    <div className="profile-card bg-white p-4 rounded-md shadow-md">
+      <img src={avatar} alt={name} className="w-16 h-16 rounded-full mb-4" />
+      <h3 className="text-lg font-semibold">{name}</h3>
+      <p className="text-gray-500">@{username}</p>
+      <p className="text-gray-700">
+        {followers > 0 ? followers : "0"} followers
+      </p>
     </div>
   );
 };

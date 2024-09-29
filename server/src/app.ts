@@ -9,6 +9,7 @@ import interactionRoutes from "./routes/interactionRoutes";
 import followRoutes from "./routes/followRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import imageRoutes from "./routes/imageRoutes";
+import hashRoutes from "./routes/hashtagRoutes";
 
 // Load environment variables from a .env file
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
 app.use("/api/images", imageRoutes);
+app.use("/api/hashtags", hashRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5001;

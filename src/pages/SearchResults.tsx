@@ -1,59 +1,47 @@
-import React, { useState } from "react";
-import FeedPostCard from "../components/Feed/FeedPostCard"; // Assuming this is the same card used for feed posts
-import ProfileCard from "../components/SearchResult/ProfileCard"; // You'll create this component for profiles
-import HashtagCard from "../components/SearchResult/HashtagCard"; // You'll create this component for hashtags
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import FeedPostCard from "../components/Feed/FeedPostCard";
+import ProfileCard from "../components/SearchResult/ProfileCard";
+import HashtagCard from "../components/SearchResult/HashtagCard";
 
 const SearchResultsPage: React.FC = () => {
-  const [filter, setFilter] = useState("Most Relevant");
+  const [filter, setFilter] = useState("All");
+  const [posts, setPosts] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [hashtags, setHashtags] = useState([]);
+  const [query, setQuery] = useState("fox"); // Example search query
 
-  // Mock data for posts, profiles, and hashtags
-  const posts = [
-    {
-      imageSrc: "images/posts/post-1.jpg",
-      textContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "24-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-2.jpg",
-      textContent:
-        "Aenean euismod bibendum laoreet, consectetur adipiscing elit.",
-      date: "23-09-2024",
-    },
-    {
-      imageSrc: "images/posts/post-3.jpg",
-      textContent:
-        "Consectetur adipiscing elit. Aenean euismod bibendum laoreet.",
-      date: "22-09-2024",
-    },
-  ];
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      try {
+        if (filter === "All" || filter === "Posts") {
+          const postResponse = await axios.get(
+            `http://localhost:5001/api/posts/search/posts?search=${query}`
+          );
+          setPosts(postResponse.data);
+          console.log(postResponse.data);
+        }
 
-  const profiles = [
-    {
-      avatar: "/images/avatars/avatar-1.jpg",
-      name: "John Doe",
-      username: "johndoe",
-      followers: 1200,
-    },
-    {
-      avatar: "/images/avatars/avatar-2.jpg",
-      name: "Jane Smith",
-      username: "janesmith",
-      followers: 950,
-    },
-    {
-      avatar: "/images/avatars/avatar-3.jpg",
-      name: "Alice Johnson",
-      username: "alicejohnson",
-      followers: 800,
-    },
-  ];
+        if (filter === "All" || filter === "Profiles") {
+          const profileResponse = await axios.get(
+            `http://localhost:5001/api/users/search/users?search=${query}`
+          );
+          setProfiles(profileResponse.data);
+        }
 
-  const hashtags = [
-    { name: "#WebDevelopment", postCount: 230 },
-    { name: "#Coding", postCount: 520 },
-    { name: "#ReactJS", postCount: 120 },
-  ];
+        if (filter === "All" || filter === "Hashtags") {
+          const hashtagResponse = await axios.get(
+            `http://localhost:5001/api/hashtags/search/hashtags?search=${query}`
+          );
+          setHashtags(hashtagResponse.data);
+        }
+      } catch (error) {
+        console.error("Error fetching search results", error);
+      }
+    };
+
+    fetchSearchResults();
+  }, [filter, query]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilter(e.target.value);
@@ -63,7 +51,7 @@ const SearchResultsPage: React.FC = () => {
     <div className="p-8 bg-background min-h-screen">
       {/* Section 1: Search Results Heading and Filter */}
       <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-h1 font-heading">Search results for: "flozza"</h1>
+        <h1 className="text-h1 font-heading">Search results for: "{query}"</h1>
         <select
           value={filter}
           onChange={handleFilterChange}
@@ -80,15 +68,18 @@ const SearchResultsPage: React.FC = () => {
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-h2 font-heading text-primary">Posts</h2>
-          <button className="text-primary hover:underline">See more</button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post, index) => (
             <FeedPostCard
               key={index}
-              imageSrc={post.imageSrc}
-              textContent={post.textContent}
+              postId={post._id} // Assuming post has _id field
+              imageSrc={post.imageUrl}
+              content={post.content}
               date={post.date}
+              initialLikesCount={post.likesCount || 0} // Assuming the post has likesCount
+              initiallyLiked={post.likedByUser || false} // Assuming the post tracks if the user liked it
+              initialComments={post.comments || []} // Assuming post has comments array
             />
           ))}
         </div>
@@ -98,13 +89,12 @@ const SearchResultsPage: React.FC = () => {
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-h2 font-heading text-primary">Profiles</h2>
-          <button className="text-primary hover:underline">See more</button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {profiles.map((profile, index) => (
             <ProfileCard
               key={index}
-              avatar={profile.avatar}
+              avatar={profile.profilePicture}
               name={profile.name}
               username={profile.username}
               followers={profile.followers}
@@ -117,7 +107,6 @@ const SearchResultsPage: React.FC = () => {
       <div className="mb-12">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-h2 font-heading text-primary">Hashtags</h2>
-          <button className="text-primary hover:underline">See more</button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {hashtags.map((hashtag, index) => (

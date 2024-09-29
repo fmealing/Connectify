@@ -125,3 +125,30 @@ export const getFollowing = async (req: Request, res: Response) => {
       .json({ message: "Error fetching following", error: err.message });
   }
 };
+
+// Search all users
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const { search } = req.query;
+
+    let users;
+    if (search) {
+      const searchRegex = new RegExp(search as string, "i");
+      users = await User.find({
+        $or: [
+          { fullName: { $regex: searchRegex } },
+          { username: { $regex: searchRegex } },
+        ],
+      }).select("-passwordHash");
+    } else {
+      users = await User.find({}, "-passwordHash");
+    }
+
+    res.status(200).json(users || []);
+  } catch (error) {
+    const err = error as Error;
+    res
+      .status(500)
+      .json({ message: "Error fetching users", error: err.message });
+  }
+};

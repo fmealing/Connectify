@@ -13,7 +13,7 @@ interface Comment {
 interface FeedPostCardProps {
   postId: string;
   imageSrc?: string;
-  textContent: string;
+  content: string;
   date: string;
   initialLikesCount: number;
   initiallyLiked: boolean;
@@ -23,17 +23,17 @@ interface FeedPostCardProps {
 const FeedPostCard: React.FC<FeedPostCardProps> = ({
   postId,
   imageSrc,
-  textContent,
+  content,
   date,
   initialLikesCount,
   initiallyLiked,
   initialComments = [],
 }) => {
   const maxLength = 100;
-  const isTextTruncated = textContent.length > maxLength;
+  const isTextTruncated = content.length > maxLength;
   const displayedText = isTextTruncated
-    ? textContent.slice(0, maxLength) + "..."
-    : textContent;
+    ? content.slice(0, maxLength) + "..."
+    : content;
 
   const [liked, setLiked] = useState(initiallyLiked);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
