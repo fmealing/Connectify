@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import CreatePostCard from "../components/Feed/CreatePostCard";
 import FeedPostCard from "../components/Feed/FeedPostCard";
+
+// Comment interface
+interface Comment {
+  _id: string;
+  content: string;
+  user: { fullName: string };
+  createdAt: string;
+}
 
 // Post interface
 interface Post {
@@ -11,7 +19,7 @@ interface Post {
   content: string;
   imageUrl?: string;
   likes: string[]; // Array of user IDs who liked the post
-  comments: string[];
+  comments: Comment[];
   createdAt: string;
 }
 
@@ -71,6 +79,7 @@ const Feed = () => {
               date={post.createdAt}
               initialLikesCount={post.likes.length} // Pass the number of likes
               initiallyLiked={userId ? post.likes.includes(userId) : false} // Check if the post is already liked by the user
+              initialComments={post.comments} // Pass the comments array
             />
           ))}
         </div>

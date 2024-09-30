@@ -10,6 +10,7 @@ import followRoutes from "./routes/followRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import imageRoutes from "./routes/imageRoutes";
 import hashRoutes from "./routes/hashtagRoutes";
+import Pusher from "pusher";
 
 // Load environment variables from a .env file
 dotenv.config();
@@ -27,6 +28,15 @@ mongoose
   .connect(mongoUri)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Failed to connect to MongoDB", err));
+
+// Pusher
+export const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID as string,
+  key: process.env.PUSHER_KEY as string,
+  secret: process.env.PUSHER_SECRET as string,
+  cluster: process.env.PUSHER_CLUSTER as string,
+  useTLS: true,
+});
 
 // Define routes
 app.use("/api/users", authRoutes);

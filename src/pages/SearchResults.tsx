@@ -77,13 +77,13 @@ const SearchResultsPage: React.FC = () => {
             {posts.map((post, index) => (
               <FeedPostCard
                 key={index}
-                postId={post._id}
-                imageSrc={post.imageUrl}
-                content={post.content}
-                date={post.date}
-                initialLikesCount={post.likesCount || 0}
-                initiallyLiked={post.likedByUser || false}
-                initialComments={post.comments || []}
+                postId={(post as any)._id}
+                imageSrc={(post as any).imageUrl}
+                content={(post as any).content}
+                date={(post as any).date}
+                initialLikesCount={(post as any).likesCount || 0}
+                initiallyLiked={(post as any).likedByUser || false}
+                initialComments={(post as any).comments || []}
               />
             ))}
           </div>
@@ -98,10 +98,10 @@ const SearchResultsPage: React.FC = () => {
             {profiles.map((profile, index) => (
               <ProfileCard
                 key={index}
-                avatar={profile.profilePicture}
-                name={profile.fullName}
-                username={profile.username}
-                followers={profile.followers}
+                avatar={(profile as any).profilePicture}
+                name={(profile as any).fullName}
+                username={(profile as any).username}
+                followers={(profile as any).followers}
               />
             ))}
           </div>
@@ -118,8 +118,8 @@ const SearchResultsPage: React.FC = () => {
             {hashtags.map((hashtag, index) => (
               <HashtagCard
                 key={index}
-                name={hashtag.name}
-                postCount={hashtag.postCount}
+                name={(hashtag as any).name}
+                postCount={(hashtag as any).postCount}
               />
             ))}
           </div>

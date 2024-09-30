@@ -1,36 +1,24 @@
 import React from "react";
 
 interface Message {
-  id: number;
+  _id: string;
   sender: string;
   content: string;
   timestamp: string;
 }
 
-const ChatHistory: React.FC<{ messages: Message[] }> = ({ messages }) => {
+interface ChatHistoryProps {
+  messages: Message[];
+}
+
+const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   return (
-    <div className="flex-1 overflow-y-auto bg-white rounded-lg shadow-md p-4 mb-4">
+    <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
       {messages.map((message) => (
-        <div key={message.id} className="mb-4">
-          <div
-            className={`font-bold ${
-              message.sender === "Me" ? "text-right" : ""
-            }`}
-          >
-            {message.sender}
-          </div>
-          <div
-            className={`p-2 rounded-lg max-w-xs ${
-              message.sender === "Me"
-                ? "bg-primary text-white ml-auto"
-                : "bg-gray-100"
-            }`}
-          >
-            {message.content}
-          </div>
-          <div className="text-sm text-gray-500 text-right">
-            {message.timestamp}
-          </div>
+        <div key={message._id} className="mb-4">
+          <p className="font-semibold">{message.sender}</p>
+          <p className="text-sm">{message.content}</p>
+          <span className="text-xs text-gray-400">{message.timestamp}</span>
         </div>
       ))}
     </div>

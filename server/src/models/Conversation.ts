@@ -1,22 +1,10 @@
-import mongoose, { Schema, Document } from "mongoose";
+// models/Conversation.ts
+import mongoose from "mongoose";
 
-interface IConversation extends Document {
-  participants: mongoose.Types.ObjectId[];
-  lastMessage?: mongoose.Types.ObjectId;
-  createdAt: Date;
-}
+const ConversationSchema = new mongoose.Schema({
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  createdAt: { type: Date, default: Date.now },
+});
 
-const ConversationSchema: Schema = new Schema(
-  {
-    participants: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    ],
-    lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
-  },
-  { timestamps: true } // Automatically adds createdAt and updatedAt
-);
-
-export default mongoose.model<IConversation>(
-  "Conversation",
-  ConversationSchema
-);
+const Conversation = mongoose.model("Conversation", ConversationSchema);
+export default Conversation;
