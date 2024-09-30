@@ -98,10 +98,11 @@ const SearchResultsPage: React.FC = () => {
             {profiles.map((profile, index) => (
               <ProfileCard
                 key={index}
+                userId={(profile as any)._id} // Make sure to pass userId
                 avatar={(profile as any).profilePicture}
                 name={(profile as any).fullName}
                 username={(profile as any).username}
-                followers={(profile as any).followers}
+                followersCount={(profile as any).followersCount || 0} // Make sure to pass the followers count
               />
             ))}
           </div>

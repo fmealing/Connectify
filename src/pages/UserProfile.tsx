@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import FeedPostCard from "../components/Feed/FeedPostCard";
 
 interface UserProfileProps {
@@ -11,31 +13,65 @@ interface UserProfileProps {
 }
 
 const UserProfilePage: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>(); // Get userId from the route
+  const [userData, setUserData] = useState<UserProfileProps | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const userData: UserProfileProps = {
-    name: "John Doe",
-    username: "john_doe",
-    followersCount: 120,
-    isFollowing: false,
-    profilePicture: "/images/avatars/avatar-5.jpg",
-    posts: [
-      {
-        imageSrc: "images/posts/post-1.jpg",
-        textContent: "First post on my profile!",
-        date: "24-09-2024",
-      },
-      {
-        imageSrc: "images/posts/post-2.jpg",
-        textContent: "Loving the new updates!",
-        date: "25-09-2024",
-      },
-    ],
+  useEffect(() => {
+    // Fetch user profile data
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/users/${userId}`
+        );
+        setUserData(response.data);
+        setIsFollowing(response.data.isFollowing);
+      } catch (error) {
+        console.error("Error fetching user profile", error);
+      }
+    };
+
+    if (userId) {
+      fetchUserProfile();
+    }
+  }, [userId]);
+
+  const handleFollowUnfollow = async () => {
+    try {
+      if (isFollowing) {
+        // Unfollow user (you may implement an unfollow route)
+        console.log("Unfollow logic here");
+      } else {
+        // Send follow request
+        await axios.post(
+          "http://localhost:5001/api/follow",
+          {
+            followUserId: userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include the token
+            },
+          }
+        );
+
+        // Update state after follow action
+        setIsFollowing(true);
+        if (userData) {
+          setUserData({
+            ...userData,
+            followersCount: userData.followersCount + 1,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error following/unfollowing user", error);
+    }
   };
 
-  const handleFollowUnfollow = () => {
-    setIsFollowing(!isFollowing);
-  };
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="profile-page bg-background min-h-screen p-8">
@@ -80,7 +116,7 @@ const UserProfilePage: React.FC = () => {
             <FeedPostCard
               key={index}
               imageSrc={post.imageSrc}
-              textContent={post.textContent}
+              content={post.content}
               date={post.date}
             />
           ))}
