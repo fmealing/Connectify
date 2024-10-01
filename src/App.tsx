@@ -13,6 +13,7 @@ import Messaging from "./pages/Messaging";
 import UserProfilePage from "./pages/UserProfile";
 import SearchResultsPage from "./pages/SearchResults";
 import AboutPage from "./pages/About";
+import Services from "./pages/Services";
 
 const App: React.FC = () => {
   return (
@@ -60,6 +61,7 @@ const App: React.FC = () => {
           />
           <Route path="/search-result" element={<SearchResultsPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<Services />} />
         </Routes>
         <Footer />
       </div>
