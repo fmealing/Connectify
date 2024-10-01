@@ -4,7 +4,7 @@ import ChatHistory from "../components/Messaging/ChatHistory";
 import ChatInput from "../components/Messaging/ChatInput";
 import ConversationsList from "../components/Messaging/ConversationsList";
 import { useEffect, useState } from "react";
-import Pusher from "pusher-js";
+import pusher from "../pusher";
 
 interface User {
   _id: string;
@@ -96,11 +96,7 @@ const MessagingPage: React.FC = () => {
       };
       fetchMessages();
 
-      // Setup Pusher to listen for new messages
-      const pusher = new Pusher("your-pusher-key", {
-        cluster: "your-cluster",
-      });
-
+      // Use the imported Pusher instance
       const channel = pusher.subscribe(
         `conversation-${selectedConversation._id}`
       );

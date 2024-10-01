@@ -20,12 +20,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="flex-1 p-2 border rounded"
+        className="flex-1 p-4 border rounded-full"
         placeholder="Type a message..."
       />
       <button
         onClick={handleSendMessage}
-        className="ml-2 px-4 py-2 bg-blue-500 text-white rounded"
+        className="ml-2 px-6 py-4 bg-primary text-white rounded-full"
       >
         Send
       </button>
