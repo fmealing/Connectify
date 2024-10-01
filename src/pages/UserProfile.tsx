@@ -18,14 +18,14 @@ const UserProfilePage: React.FC = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    // Fetch user profile data
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5001/api/users/${userId}`
         );
+        console.log(response.data); // Check the response here
         setUserData(response.data);
-        setIsFollowing(response.data.isFollowing);
+        setIsFollowing(response.data.isFollowing); // Set the initial follow state
       } catch (error) {
         console.error("Error fetching user profile", error);
       }
@@ -40,22 +40,41 @@ const UserProfilePage: React.FC = () => {
     try {
       if (isFollowing) {
         // Unfollow user (you may implement an unfollow route)
-        console.log("Unfollow logic here");
-      } else {
-        // Send follow request
         await axios.post(
-          "http://localhost:5001/api/follow",
+          "http://localhost:5001/api/follow/unfollow",
           {
             followUserId: userId,
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include the token
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include the token
             },
           }
         );
 
-        // Update state after follow action
+        // Update UI after unfollowing
+        setIsFollowing(false);
+        if (userData) {
+          setUserData({
+            ...userData,
+            followersCount: userData.followersCount - 1,
+          });
+        }
+      } else {
+        // Follow user
+        await axios.post(
+          "http://localhost:5001/api/follow/follow",
+          {
+            followUserId: userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Include the token
+            },
+          }
+        );
+
+        // Update UI after following
         setIsFollowing(true);
         if (userData) {
           setUserData({
@@ -86,7 +105,7 @@ const UserProfilePage: React.FC = () => {
 
         {/* Profile Details */}
         <div className="profile-details flex-1">
-          <h2 className="text-h2 font-heading">{userData.name}</h2>
+          <h2 className="text-h2 font-heading">{userData.fullName}</h2>
           <p className="text-sm text-gray-600">@{userData.username}</p>
           <p className="text-sm text-gray-600">
             {userData.followersCount} Followers
@@ -107,7 +126,7 @@ const UserProfilePage: React.FC = () => {
       {/* User Posts */}
       <div className="my-5">
         <h2 className="text-h2 font-heading text-center text-primary mb-6">
-          {userData.name}'s Posts
+          {userData.fullName}'s Posts
         </h2>
 
         {/* Grid Layout for User Posts */}
@@ -116,7 +135,7 @@ const UserProfilePage: React.FC = () => {
             <FeedPostCard
               key={index}
               imageSrc={post.imageSrc}
-              content={post.content}
+              content={post.textContent}
               date={post.date}
             />
           ))}

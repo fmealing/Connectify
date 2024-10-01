@@ -69,6 +69,12 @@ export const unfollowUser = async (req: Request, res: Response) => {
     }
 
     // Remove unfollowUserId from user's following array
+    user.following = user.following.filter(
+      (id) => id.toString() !== unfollowUserId
+    );
+    await user.save();
+
+    // Remove userId from unfollowUser's followers array
     unfollowUser.followers = unfollowUser.followers.filter(
       (id) => id.toString() !== userId
     );

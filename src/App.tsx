@@ -50,7 +50,7 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/user-profile"
+            path="/user-profile/:userId"
             element={
               <ProtectedRoute>
                 <UserProfilePage />

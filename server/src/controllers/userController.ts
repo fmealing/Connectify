@@ -78,6 +78,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const getFollowers = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    console.log("User ID: ", userId);
 
     // Find the user ID and populate the 'followers' field
     const user = await User.findById(userId).populate(
@@ -89,6 +90,8 @@ export const getFollowers = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    console.log("User's followers: ", user.followers);
 
     // Return the list of followers
     res.status(200).json({ followers: user.followers });

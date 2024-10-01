@@ -7,8 +7,17 @@ export const createConversation = async (req: Request, res: Response) => {
   const { userIds } = req.body;
 
   try {
-    const conversation = new Conversation({ participants: userIds });
-    await conversation.save();
+    // Check if a conversation between these participants already exists
+    let conversation = await Conversation.findOne({
+      participants: { $all: userIds },
+    });
+
+    // If conversation doesn't exist, create a new one
+    if (!conversation) {
+      conversation = new Conversation({ participants: userIds });
+      await conversation.save();
+      await conversation.populate("participants", "fullName username");
+    }
 
     res.status(201).json(conversation);
   } catch (error) {
@@ -52,13 +61,17 @@ export const getConversationMessages = async (req: Request, res: Response) => {
 
 // Get all conversations of an authenticated user
 export const getConversationsById = async (req: Request, res: Response) => {
-  const userId = (req as any).user.id; // Assuming the user is authenticated
+  const userId = (req as any).user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized. User not found." });
+  }
 
   try {
-    // Find conversations where the user is a participant
+    // Populate the 'participants' field with fullName and username
     const conversations = await Conversation.find({
       participants: userId,
-    }).populate("participants", "username");
+    }).populate("participants", "fullName username");
 
     res.status(200).json(conversations);
   } catch (error) {

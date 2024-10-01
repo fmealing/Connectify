@@ -4,6 +4,7 @@ import ChatHistory from "../components/Messaging/ChatHistory";
 import ChatInput from "../components/Messaging/ChatInput";
 import ConversationsList from "../components/Messaging/ConversationsList";
 import { useEffect, useState } from "react";
+import Pusher from "pusher-js";
 
 interface User {
   _id: string;
@@ -29,17 +30,16 @@ const MessagingPage: React.FC = () => {
     useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // Fetch initial conversations and followers
   useEffect(() => {
-    // Get the JWT token from localStorage (or wherever it is stored)
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     let userId: string | null = null;
 
     if (token) {
-      const decoded: any = jwtDecode(token); // Decode the token to get user info
-      userId = decoded._id; // Assuming user ID is stored as '_id' in the JWT
+      const decoded: any = jwtDecode(token);
+      userId = decoded.id;
     }
 
-    // Fetch conversations on load
     const fetchConversations = async () => {
       try {
         const response = await axios.get(
@@ -51,14 +51,13 @@ const MessagingPage: React.FC = () => {
       }
     };
 
-    // Fetch followers on load if userId is available
     const fetchFollowers = async () => {
-      if (!userId) return; // If no userId is found, don't proceed
+      if (!userId) return;
       try {
         const response = await axios.get(
           `http://localhost:5001/api/users/${userId}/followers`
         );
-        setFollowers(response.data.followers); // Access the followers list
+        setFollowers(response.data.followers);
       } catch (error) {
         console.error("Error fetching followers:", error);
       }
@@ -73,37 +72,82 @@ const MessagingPage: React.FC = () => {
     try {
       const response = await axios.post(
         "http://localhost:5001/api/conversations/create",
-        { userIds: [participantId] } // Pass the selected follower's ID
+        { userIds: [participantId] }
       );
-      setConversations([...conversations, response.data]); // Add the new conversation
-      setSelectedConversation(response.data); // Select the newly created conversation
+      setConversations([...conversations, response.data]);
+      setSelectedConversation(response.data);
     } catch (error) {
       console.error("Error creating conversation:", error);
     }
   };
 
+  // Fetch messages for selected conversation
+  useEffect(() => {
+    if (selectedConversation) {
+      const fetchMessages = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5001/api/conversations/${selectedConversation._id}/messages`
+          );
+          setMessages(response.data);
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        }
+      };
+      fetchMessages();
+
+      // Setup Pusher to listen for new messages
+      const pusher = new Pusher("your-pusher-key", {
+        cluster: "your-cluster",
+      });
+
+      const channel = pusher.subscribe(
+        `conversation-${selectedConversation._id}`
+      );
+      channel.bind("new-message", (data: { message: Message }) => {
+        setMessages((prevMessages) => [...prevMessages, data.message]);
+      });
+
+      return () => {
+        pusher.unsubscribe(`conversation-${selectedConversation._id}`);
+      };
+    }
+  }, [selectedConversation]);
+
+  // Send a new message
+  const sendMessage = async (content: string) => {
+    if (!selectedConversation) return;
+    const token = localStorage.getItem("authToken");
+    const decoded: any = jwtDecode(token);
+    const senderId = decoded.id;
+
+    try {
+      await axios.post("http://localhost:5001/api/conversations/messages", {
+        conversationId: selectedConversation._id,
+        senderId,
+        content,
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
     <div className="flex h-screen">
-      {/* Conversations List */}
       <ConversationsList
         conversations={conversations}
-        followers={followers} // Pass followers to ConversationsList
+        followers={followers}
         onSelectConversation={(conversationId) => {
           const selected = conversations.find((c) => c._id === conversationId);
           setSelectedConversation(selected || null);
         }}
-        onCreateConversation={createConversation} // Pass function to create new conversation
+        onCreateConversation={createConversation}
       />
 
-      {/* Chat Section */}
       {selectedConversation ? (
         <div className="w-3/4">
           <ChatHistory messages={messages} />
-          <ChatInput
-            onSendMessage={(message) => {
-              // TODO: Implement message sending here
-            }}
-          />
+          <ChatInput onSendMessage={sendMessage} />
         </div>
       ) : (
         <div className="w-3/4 flex items-center justify-center">
