@@ -39,7 +39,8 @@ const UserSchema: Schema = new Schema(
     },
     profilePicture: {
       type: String,
-      default: "",
+      default:
+        "https://storage.googleapis.com/connectify-images/1727796607846_default%20image.jpg",
     },
     bio: {
       type: String,

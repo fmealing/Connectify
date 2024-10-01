@@ -12,6 +12,7 @@ import Feed from "./pages/Feed";
 import Messaging from "./pages/Messaging";
 import UserProfilePage from "./pages/UserProfile";
 import SearchResultsPage from "./pages/SearchResults";
+import AboutPage from "./pages/About";
 
 const App: React.FC = () => {
   return (
@@ -58,6 +59,7 @@ const App: React.FC = () => {
             }
           />
           <Route path="/search-result" element={<SearchResultsPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
         <Footer />
       </div>

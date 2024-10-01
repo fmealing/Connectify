@@ -181,7 +181,7 @@ const Profile: React.FC = () => {
           {profile ? (
             <>
               <ProfilePicture
-                src={profile.profilePicture || "/images/avatars/avatar-4.jpg"}
+                src={profile.profilePicture}
                 alt="Profile"
                 onImageUpload={handleImageUpload}
               />

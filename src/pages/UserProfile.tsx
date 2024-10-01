@@ -10,6 +10,7 @@ interface UserProfileProps {
   isFollowing: boolean;
   profilePicture: string;
   posts: { imageSrc: string; textContent: string; date: string }[];
+  following: string[]; // Array of user IDs that this user is following
 }
 
 const UserProfilePage: React.FC = () => {
@@ -18,28 +19,48 @@ const UserProfilePage: React.FC = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchUserProfileAndPosts = async () => {
       try {
-        const response = await axios.get(
+        // Fetch the user profile
+        const userResponse = await axios.get(
           `http://localhost:5001/api/users/${userId}`
         );
-        console.log(response.data); // Check the response here
-        setUserData(response.data);
-        setIsFollowing(response.data.isFollowing); // Set the initial follow state
+
+        // Fetch the posts for the user
+        const postsResponse = await axios.get(
+          `http://localhost:5001/api/posts/user/${userId}`
+        );
+
+        // Combine user data and posts
+        const combinedUserData = {
+          ...userResponse.data,
+          posts: postsResponse.data, // Add the posts to userData
+        };
+
+        console.log("User data and posts:", combinedUserData);
+
+        // Update state with user data and posts
+        setUserData(combinedUserData);
+
+        // Now let's check if the current user (from params) is following this user
+        const isFollowingUser = combinedUserData.following.some(
+          (followingUserId: string) => followingUserId === userId
+        );
+
+        setIsFollowing(isFollowingUser); // Set the isFollowing state
       } catch (error) {
-        console.error("Error fetching user profile", error);
+        console.error("Error fetching user profile or posts", error);
       }
     };
 
     if (userId) {
-      fetchUserProfile();
+      fetchUserProfileAndPosts();
     }
   }, [userId]);
 
   const handleFollowUnfollow = async () => {
     try {
       if (isFollowing) {
-        // Unfollow user (you may implement an unfollow route)
         await axios.post(
           "http://localhost:5001/api/follow/unfollow",
           {
@@ -52,7 +73,6 @@ const UserProfilePage: React.FC = () => {
           }
         );
 
-        // Update UI after unfollowing
         setIsFollowing(false);
         if (userData) {
           setUserData({
@@ -61,7 +81,6 @@ const UserProfilePage: React.FC = () => {
           });
         }
       } else {
-        // Follow user
         await axios.post(
           "http://localhost:5001/api/follow/follow",
           {
@@ -74,7 +93,6 @@ const UserProfilePage: React.FC = () => {
           }
         );
 
-        // Update UI after following
         setIsFollowing(true);
         if (userData) {
           setUserData({
@@ -92,26 +110,24 @@ const UserProfilePage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  console.log("User id:", userId);
+  console.log("Following user ids: ", userData.following);
+
   return (
     <div className="profile-page bg-background min-h-screen p-8">
       {/* Profile Info */}
       <div className="profile-info bg-white shadow-md rounded-lg p-10 mb-10 flex flex-col md:flex-row items-center md:items-start gap-8">
-        {/* Profile Picture */}
         <img
           src={userData.profilePicture}
           alt="Profile"
           className="w-40 h-40 rounded-full object-cover"
         />
-
-        {/* Profile Details */}
         <div className="profile-details flex-1">
-          <h2 className="text-h2 font-heading">{userData.fullName}</h2>
+          <h2 className="text-h2 font-heading">{(userData as any).fullName}</h2>
           <p className="text-sm text-gray-600">@{userData.username}</p>
           <p className="text-sm text-gray-600">
-            {userData.followersCount} Followers
+            {(userData as any).followers.length} Followers
           </p>
-
-          {/* Follow/Unfollow Button */}
           <button
             onClick={handleFollowUnfollow}
             className={`mt-4 px-6 py-2 rounded-full transition ${
@@ -126,17 +142,19 @@ const UserProfilePage: React.FC = () => {
       {/* User Posts */}
       <div className="my-5">
         <h2 className="text-h2 font-heading text-center text-primary mb-6">
-          {userData.fullName}'s Posts
+          {(userData as any).fullName}'s Posts
         </h2>
-
-        {/* Grid Layout for User Posts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {userData.posts.map((post, index) => (
             <FeedPostCard
               key={index}
-              imageSrc={post.imageSrc}
-              content={post.textContent}
-              date={post.date}
+              postId={(post as any)._id} // Ensure your backend returns a post ID
+              imageSrc={(post as any).imageUrl}
+              content={(post as any).content} // Assuming post.textContent is the post's text
+              date={(post as any).createdAt}
+              initialLikesCount={(post as any).likesCount || 0} // Modify according to your backend structure
+              initiallyLiked={(post as any).isLiked || false} // Modify according to your backend structure
+              initialComments={(post as any).comments || []} // Modify according to your backend structure
             />
           ))}
         </div>
