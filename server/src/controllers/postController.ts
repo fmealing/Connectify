@@ -22,7 +22,6 @@ interface AuthenticateRequest extends Request {
 export const createPost = async (req: Request, res: Response) => {
   try {
     const { content, imageUrl, videoUrl } = req.body;
-    console.log("Request user id", (req as any).user.id); // TODO: Remove this line
     const userId = (req as any).user.id; // Assume the user is authenticated
 
     if (!userId) {
@@ -57,8 +56,6 @@ export const getAllPosts = async (req: Request, res: Response) => {
         populate: { path: "user", select: "fullName" },
       })
       .exec();
-
-    console.log(posts); // Log the posts to see if it's an array
 
     res.status(200).json(posts || []); // Ensure posts is an array
   } catch (error) {
@@ -228,8 +225,7 @@ export const getPostsByUser = async (req: Request, res: Response) => {
 // Search all posts
 export const getPosts = async (req: Request, res: Response) => {
   try {
-    const { search } = req.query; // Extract search query
-    console.log("Search query", search); // Log the search query
+    const { search } = req.query;
 
     let posts;
     if (search) {
@@ -241,7 +237,6 @@ export const getPosts = async (req: Request, res: Response) => {
           populate: { path: "user", select: "fullName" },
         })
         .exec();
-      console.log("Posts if search exists", posts); // Log the posts to see if it's an array
     } else {
       posts = await Post.find()
         .populate("user", "fullName profilePicture")
@@ -250,7 +245,6 @@ export const getPosts = async (req: Request, res: Response) => {
           populate: { path: "user", select: "fullName" },
         })
         .exec();
-      console.log("Posts if search doesn't exist", posts); // Log the posts to see if it's an array
     }
 
     res.status(200).json(posts || []);

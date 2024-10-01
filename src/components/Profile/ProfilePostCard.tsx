@@ -34,11 +34,6 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
       formData.append("image", editedImage); // Use "image" as the field name for file
     }
 
-    // Log formData for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
     try {
       const response = await axios.put(
         `http://localhost:5001/api/posts/${postId}`,
@@ -79,7 +74,6 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
       if (response.status === 200) {
         // Call onDelete function to remove the post from the frontend state
         onDelete(postId);
-        console.log("Post deleted successfully!");
       }
     } catch (error) {
       console.error("Error deleting post:", error);

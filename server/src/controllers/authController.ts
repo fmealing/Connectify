@@ -26,7 +26,6 @@ export const signup = async (req: Request, res: Response) => {
     const existingUsername = await User.findOne({ username });
 
     if (existingUser) {
-      console.log("User with this email already exists");
       return res
         .status(400)
         .json({ message: "User with this email already exists" });
@@ -109,7 +108,6 @@ export const getUserProfile = async (req: Request, res: Response) => {
 export const updateUserProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id; // Get the authenticated user's ID
-    console.log("User ID: ", userId);
 
     if (!userId) {
       return res

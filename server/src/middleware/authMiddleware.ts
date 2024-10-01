@@ -17,10 +17,13 @@ export const authenticate = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    console.log("Decoded user ID", decoded); // This is correct
-    (req as any).user = decoded; // Attach the decode token data to the request object
+
+    (req as any).user = decoded; // Attach the decoded token (with user info) to the request object
+
+    // Ensure the `user` object contains the `id`
     next();
   } catch (error) {
+    console.error("Token verification failed:", error);
     res.status(400).json({ message: "Invalid token" });
   }
 };

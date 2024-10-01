@@ -38,8 +38,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
   // Redirect to the user profile on card click
   const handleCardClick = () => {
-    console.log("Clicked on", name);
-    console.log("Navigating to", `/user-profile/${userId}`);
     navigate(`/user-profile/${userId}`); // Redirect to user profile with userId
   };
 

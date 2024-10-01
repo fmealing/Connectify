@@ -22,7 +22,6 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   // Handle file selection and call the onImageUpload prop
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      console.log("Selected file: ", event.target.files[0]);
       onImageUpload(event.target.files[0]);
     }
   };

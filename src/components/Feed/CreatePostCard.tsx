@@ -32,7 +32,6 @@ const CreatePostCard: React.FC = () => {
         );
 
         uploadedImageUrl = imageUploadResponse.data.url; // Get the uploaded image URL
-        console.log("Image uploaded successfully:", uploadedImageUrl);
       }
 
       // Step 2: Create the post by sending the content and the image URL (if uploaded)

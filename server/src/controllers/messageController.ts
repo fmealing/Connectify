@@ -50,7 +50,7 @@ export const sendMessage = async (req: Request, res: Response) => {
 export const getConversationMessages = async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
-    const messages = await Message.find({ conversationId }).sort({
+    const messages = await Message.find({ conversation: conversationId }).sort({
       createdAt: 1,
     }); // Fetch and sort messages by time
     res.status(200).json(messages);
@@ -61,20 +61,24 @@ export const getConversationMessages = async (req: Request, res: Response) => {
 
 // Get all conversations of an authenticated user
 export const getConversationsById = async (req: Request, res: Response) => {
-  const userId = (req as any).user?.id;
+  const user = (req as any).user; // Access the decoded token from the request
+
+  const userId = user?.id || user?._id;
 
   if (!userId) {
-    return res.status(401).json({ message: "Unauthorized. User not found." });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized. User ID not found." });
   }
 
   try {
-    // Populate the 'participants' field with fullName and username
     const conversations = await Conversation.find({
       participants: userId,
     }).populate("participants", "fullName username");
 
     res.status(200).json(conversations);
   } catch (error) {
+    console.error("Error fetching conversations:", error);
     res.status(500).json({ message: "Error fetching conversations", error });
   }
 };

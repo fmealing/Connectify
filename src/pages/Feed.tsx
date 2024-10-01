@@ -50,7 +50,6 @@ const Feed = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/posts");
-        console.log(response.data); // Log the response data
         setPosts(response.data);
       } catch (error) {
         console.error(error);

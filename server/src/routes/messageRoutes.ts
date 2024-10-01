@@ -5,6 +5,7 @@ import {
   getConversationsById,
   sendMessage,
 } from "../controllers/messageController";
+import { authenticate } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
@@ -18,6 +19,6 @@ router.post("/messages", sendMessage);
 router.get("/:conversationId/messages", getConversationMessages);
 
 // Get conversations of an authenticated user
-router.get("/", getConversationsById);
+router.get("/", authenticate, getConversationsById);
 
 export default router;

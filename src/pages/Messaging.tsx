@@ -9,6 +9,7 @@ import pusher from "../pusher";
 interface User {
   _id: string;
   username: string;
+  fullName: string;
 }
 
 interface Conversation {
@@ -30,7 +31,6 @@ const MessagingPage: React.FC = () => {
     useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  // Fetch initial conversations and followers
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     let userId: string | null = null;
@@ -41,9 +41,19 @@ const MessagingPage: React.FC = () => {
     }
 
     const fetchConversations = async () => {
+      if (!token) {
+        console.error("No auth token found");
+        return;
+      }
+
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/conversations"
+          "http://localhost:5001/api/conversations",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setConversations(response.data);
       } catch (error) {
@@ -67,36 +77,54 @@ const MessagingPage: React.FC = () => {
     fetchFollowers();
   }, []);
 
-  // Create a new conversation
+  // Create a new conversation between the logged-in user and another user
   const createConversation = async (participantId: string) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    const decoded: any = jwtDecode(token);
+    const userId = decoded.id;
+
     try {
       const response = await axios.post(
         "http://localhost:5001/api/conversations/create",
-        { userIds: [participantId] }
+        { userIds: [userId, participantId] }, // Send the user IDs to create a conversation
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setConversations([...conversations, response.data]);
-      setSelectedConversation(response.data);
+      setSelectedConversation(response.data); // Automatically select the newly created conversation
     } catch (error) {
       console.error("Error creating conversation:", error);
     }
   };
 
-  // Fetch messages for selected conversation
+  const fetchMessages = async (conversationId: string) => {
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/conversations/${conversationId}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessages(response.data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
   useEffect(() => {
     if (selectedConversation) {
-      const fetchMessages = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:5001/api/conversations/${selectedConversation._id}/messages`
-          );
-          setMessages(response.data);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      };
-      fetchMessages();
+      fetchMessages(selectedConversation._id);
 
-      // Use the imported Pusher instance
+      // Set up Pusher for real-time message updates
       const channel = pusher.subscribe(
         `conversation-${selectedConversation._id}`
       );
@@ -104,25 +132,33 @@ const MessagingPage: React.FC = () => {
         setMessages((prevMessages) => [...prevMessages, data.message]);
       });
 
+      // Clean up Pusher subscription on unmount or conversation change
       return () => {
         pusher.unsubscribe(`conversation-${selectedConversation._id}`);
       };
     }
   }, [selectedConversation]);
 
-  // Send a new message
   const sendMessage = async (content: string) => {
     if (!selectedConversation) return;
     const token = localStorage.getItem("authToken");
-    const decoded: any = jwtDecode(token);
+    const decoded: any = jwtDecode(token as any);
     const senderId = decoded.id;
 
     try {
-      await axios.post("http://localhost:5001/api/conversations/messages", {
-        conversationId: selectedConversation._id,
-        senderId,
-        content,
-      });
+      await axios.post(
+        "http://localhost:5001/api/conversations/messages",
+        {
+          conversationId: selectedConversation._id,
+          senderId,
+          content,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -137,7 +173,7 @@ const MessagingPage: React.FC = () => {
           const selected = conversations.find((c) => c._id === conversationId);
           setSelectedConversation(selected || null);
         }}
-        onCreateConversation={createConversation}
+        onCreateConversation={createConversation} // Add the createConversation function here
       />
 
       {selectedConversation ? (

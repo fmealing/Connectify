@@ -1,15 +1,15 @@
 import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 
 interface User {
   _id: string;
   username: string;
+  fullName: string;
 }
 
 interface Conversation {
   _id: string;
-  participants: string[]; // Now it's an array of user IDs (strings)
+  participants: User[];
 }
 
 interface ConversationsListProps {
@@ -25,54 +25,13 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
   onSelectConversation,
   onCreateConversation,
 }) => {
-  const [userDetails, setUserDetails] = useState<{ [key: string]: User }>({}); // To store fetched user details
-
-  // Get userId from token
   const token = localStorage.getItem("authToken");
   let userId: string | null = null;
+
   if (token) {
     const decoded: any = jwtDecode(token); // Decode the token to get user info
     userId = decoded.id;
   }
-
-  // Function to fetch details of other users in conversations
-  const fetchOtherUserDetails = async (otherUserId: string) => {
-    if (!userDetails[otherUserId]) {
-      try {
-        console.log(`Fetching details for userID: ${otherUserId}`);
-        const response = await axios.get(
-          `http://localhost:5001/api/users/${otherUserId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log("Response data:", response.data);
-
-        setUserDetails((prevDetails) => ({
-          ...prevDetails,
-          [otherUserId]: response.data,
-        }));
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    }
-  };
-
-  // Fetch other participants for all conversations
-  useEffect(() => {
-    conversations.forEach((conversation) => {
-      const otherParticipantId = conversation.participants.find(
-        (participantId) => participantId !== userId // We are now working with IDs (strings)
-      );
-      console.log("Other Participant ID:", otherParticipantId);
-
-      if (otherParticipantId) {
-        fetchOtherUserDetails(otherParticipantId); // Fetch user details using the participant's ID
-      }
-    });
-  }, [conversations, userId]); // Dependency array includes conversations and userId
 
   return (
     <div className="w-1/4 bg-white shadow-md">
@@ -87,7 +46,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                 className="p-4 cursor-pointer hover:bg-gray-200"
                 onClick={() => onCreateConversation(follower._id)}
               >
-                <p>{(follower as any).fullName || follower.username}</p>
+                <p>{follower.fullName || follower.username}</p>
               </li>
             ))}
           </>
@@ -96,12 +55,10 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
           <>
             <h3 className="text-md font-bold p-2">Existing Conversations</h3>
             {conversations.map((conversation) => {
-              const otherParticipantId = conversation.participants.find(
-                (participantId) => participantId !== userId // We are working with ID strings
+              // Find the other participant in the conversation
+              const otherParticipant = conversation.participants.find(
+                (participant) => participant._id !== userId
               );
-
-              if (!otherParticipantId) return null; // Ensure otherParticipantId exists
-
               return (
                 <li
                   key={conversation._id}
@@ -110,9 +67,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                 >
                   <p>
                     Conversation with{" "}
-                    {userDetails[otherParticipantId]?.fullName ||
-                      userDetails[otherParticipantId]?.username ||
-                      "Loading..."}
+                    {otherParticipant?.fullName || otherParticipant?.username}
                   </p>
                 </li>
               );
