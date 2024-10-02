@@ -130,7 +130,6 @@ const Profile: React.FC = () => {
   };
 
   const handleImageUpload = async (file: File) => {
-    console.log("Uploading image...", file);
     const formData = new FormData();
     formData.append("image", file); // Append the file to the form data
 
@@ -146,7 +145,6 @@ const Profile: React.FC = () => {
         }
       );
       setProfile(response.data); // Update local state with the updated profile data
-      console.log("Image uploaded successfully.", response.data);
     } catch (error) {
       console.error("Error uploading image", error);
       setError("Error uploading image.");

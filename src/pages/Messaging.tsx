@@ -77,7 +77,6 @@ const MessagingPage: React.FC = () => {
     fetchFollowers();
   }, []);
 
-  // Create a new conversation between the logged-in user and another user
   const createConversation = async (participantId: string) => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
@@ -85,7 +84,6 @@ const MessagingPage: React.FC = () => {
     const decoded: any = jwtDecode(token);
     const userId = decoded.id;
 
-    // Check if conversation already exists
     const existingConversation = conversations.find((conversation) =>
       conversation.participants.some(
         (participant) => participant._id === participantId
@@ -93,10 +91,8 @@ const MessagingPage: React.FC = () => {
     );
 
     if (existingConversation) {
-      // Select the existing conversation
       setSelectedConversation(existingConversation);
     } else {
-      // If no existing conversation, create a new one
       try {
         const response = await axios.post(
           "http://localhost:5001/api/conversations/create",
@@ -108,7 +104,7 @@ const MessagingPage: React.FC = () => {
           }
         );
         setConversations([...conversations, response.data]);
-        setSelectedConversation(response.data); // Automatically select the newly created conversation
+        setSelectedConversation(response.data);
       } catch (error) {
         console.error("Error creating conversation:", error);
       }
@@ -137,7 +133,6 @@ const MessagingPage: React.FC = () => {
     if (selectedConversation) {
       fetchMessages(selectedConversation._id);
 
-      // Set up Pusher for real-time message updates
       const channel = pusher.subscribe(
         `conversation-${selectedConversation._id}`
       );
@@ -145,7 +140,6 @@ const MessagingPage: React.FC = () => {
         setMessages((prevMessages) => [...prevMessages, data.message]);
       });
 
-      // Clean up Pusher subscription on unmount or conversation change
       return () => {
         pusher.unsubscribe(`conversation-${selectedConversation._id}`);
       };
@@ -178,7 +172,7 @@ const MessagingPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-100">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] bg-gray-100">
       {/* Conversations List */}
       <ConversationsList
         conversations={conversations}
@@ -192,12 +186,12 @@ const MessagingPage: React.FC = () => {
 
       {/* Chat History */}
       {selectedConversation ? (
-        <div className="w-3/4 bg-white shadow-md rounded-lg m-4 p-4 flex flex-col justify-between">
+        <div className="flex-1 bg-white shadow-md rounded-lg m-4 p-4 flex flex-col justify-between mb-10">
           <ChatHistory messages={messages} />
           <ChatInput onSendMessage={sendMessage} />
         </div>
       ) : (
-        <div className="w-3/4 flex items-center justify-center text-text">
+        <div className="flex-1 flex items-center justify-center text-text">
           <h2 className="font-heading text-h2">
             Select a conversation to start chatting
           </h2>

@@ -16,7 +16,6 @@ interface ChatHistoryProps {
 const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   const [userDetails, setUserDetails] = useState<{ [key: string]: string }>({});
 
-  // Fetch user details based on sender ID
   const fetchUserDetails = async (userId: string) => {
     if (!userDetails[userId]) {
       try {

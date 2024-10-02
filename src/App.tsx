@@ -20,53 +20,57 @@ import Contact from "./pages/Contact";
 const App: React.FC = () => {
   return (
     <Router>
-      {/* Ensure that Router wraps the entire component structure */}
-      <div>
+      <div className="flex flex-col min-h-screen">
+        {/* Navbar */}
         <Navbar />
-        {/* Set up routes */}
-        <Routes>
-          <Route path="/" element={<Home />} /> {/* Completed ✅ */}
-          <Route path="/login" element={<Login />} /> {/* Completed ✅ */}
-          <Route path="/signup" element={<Signup />} /> {/* Completed ✅ */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile /> {/* Completed ✅ */}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/feed"
-            element={
-              <ProtectedRoute>
-                <Feed /> {/* Completed ✅ */}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/messaging"
-            element={
-              <ProtectedRoute>
-                <Messaging />{" "}
-                {/* Will use external API for this. Just gives me too many headaches*/}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-profile/:userId"
-            element={
-              <ProtectedRoute>
-                <UserProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/search-result" element={<SearchResultsPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/team" element={<TeamPage />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
+
+        {/* Main content area should expand to fill available space */}
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feed"
+              element={
+                <ProtectedRoute>
+                  <Feed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/messaging"
+              element={
+                <ProtectedRoute>
+                  <Messaging />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-profile/:userId"
+              element={
+                <ProtectedRoute>
+                  <UserProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/search-result" element={<SearchResultsPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </div>
+
+        {/* Footer */}
         <Footer />
       </div>
     </Router>

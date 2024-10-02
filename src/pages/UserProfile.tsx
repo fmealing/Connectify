@@ -37,8 +37,6 @@ const UserProfilePage: React.FC = () => {
           posts: postsResponse.data, // Add the posts to userData
         };
 
-        console.log("User data and posts:", combinedUserData);
-
         // Update state with user data and posts
         setUserData(combinedUserData);
 
@@ -109,9 +107,6 @@ const UserProfilePage: React.FC = () => {
   if (!userData) {
     return <div>Loading...</div>;
   }
-
-  console.log("User id:", userId);
-  console.log("Following user ids: ", userData.following);
 
   return (
     <div className="profile-page bg-background min-h-screen p-8">

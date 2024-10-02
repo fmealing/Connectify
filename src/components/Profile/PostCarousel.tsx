@@ -42,7 +42,7 @@ const PostCarousel: React.FC<PostCarouselProps> = ({ posts: initialPosts }) => {
   };
 
   return (
-    <div className="post-carousel my-8">
+    <div className="post-carousel my-8 mx-4">
       <Swiper
         spaceBetween={30}
         slidesPerView={1}

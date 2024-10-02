@@ -34,7 +34,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
   }
 
   return (
-    <div className="w-1/4 bg-gray-50 shadow-lg m-4 p-4 rounded-xl">
+    <div className="w-full md:w-1/4 bg-gray-50 shadow-lg m-4 p-4 rounded-xl">
       <h2 className="text-h2 font-heading font-bold mb-6 text-primary">
         Conversations
       </h2>
