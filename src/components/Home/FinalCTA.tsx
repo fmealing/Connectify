@@ -2,21 +2,21 @@ import React from "react";
 
 const FinalCTA: React.FC = () => {
   return (
-    <section className="bg-gradient-to-r from-primary to-secondary py-16 px-4 text-center text-white">
+    <section className="bg-gradient-to-r from-primary to-secondary py-20 px-6 text-center text-white">
       {/* Heading */}
-      <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-6">
         Ready to Connect?
       </h2>
 
-      {/* Subheading (optional) */}
-      <p className="text-lg md:text-xl font-body mb-10">
+      {/* Subheading */}
+      <p className="text-base sm:text-lg md:text-xl font-body mb-10">
         Join Connectify today and start building meaningful connections.
       </p>
 
       {/* CTA Button */}
       <a
         href="/signup"
-        className="px-8 py-4 bg-accent text-white font-semibold rounded-md shadow-lg hover:bg-accent-dark transition-transform transform hover:scale-105"
+        className="px-10 py-4 bg-accent text-white font-semibold rounded-md shadow-lg hover:bg-accent-dark transition-transform transform hover:scale-105 text-base sm:text-lg md:text-xl"
       >
         Get Started
       </a>

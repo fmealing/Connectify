@@ -3,7 +3,6 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import FeedPostCard from "../components/Feed/FeedPostCard";
 import ProfileCard from "../components/SearchResult/ProfileCard";
-import HashtagCard from "../components/SearchResult/HashtagCard";
 
 // Helper function to parse query parameters
 function useQuery() {
@@ -15,7 +14,6 @@ const SearchResultsPage: React.FC = () => {
   const [filter, setFilter] = useState("All");
   const [posts, setPosts] = useState([]);
   const [profiles, setProfiles] = useState([]);
-  const [hashtags, setHashtags] = useState([]);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -33,13 +31,6 @@ const SearchResultsPage: React.FC = () => {
             `http://localhost:5001/api/users/search/users?search=${query}`
           );
           setProfiles(profileResponse.data);
-        }
-
-        if (filter === "All" || filter === "Hashtags") {
-          const hashtagResponse = await axios.get(
-            `http://localhost:5001/api/hashtags/search/hashtags?search=${query}`
-          );
-          setHashtags(hashtagResponse.data);
         }
       } catch (error) {
         console.error("Error fetching search results", error);
@@ -65,7 +56,6 @@ const SearchResultsPage: React.FC = () => {
           <option value="All">All</option>
           <option value="Posts">Posts</option>
           <option value="Profiles">Profiles</option>
-          <option value="Hashtags">Hashtags</option>
         </select>
       </div>
 
@@ -103,24 +93,6 @@ const SearchResultsPage: React.FC = () => {
                 name={(profile as any).fullName}
                 username={(profile as any).username}
                 followersCount={(profile as any).followersCount || 0} // Make sure to pass the followers count
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Hashtags (Conditionally Rendered) */}
-      {(filter === "All" || filter === "Hashtags") && (
-        <div className="mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-h2 font-heading text-primary">Hashtags</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {hashtags.map((hashtag, index) => (
-              <HashtagCard
-                key={index}
-                name={(hashtag as any).name}
-                postCount={(hashtag as any).postCount}
               />
             ))}
           </div>

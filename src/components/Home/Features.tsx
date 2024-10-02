@@ -13,17 +13,16 @@ const Features: React.FC = () => {
   return (
     <section className="py-16 px-4 bg-background text-text">
       {/* Title */}
-      <h2 className="text-center text-h1 font-bold font-heading mb-12">
+      <h2 className="text-center text-2xl sm:text-h1 font-bold font-heading mb-12">
         Why Connectify?
       </h2>
 
-      {/* 3x2 Grid of Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+      {/* Grid of Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
         <FeatureCard
           icon={faListAlt}
           title="Personalised Feed"
-          description="Tailored content based on your interests and the people you follow.
-          Discover trending topics and stay in the loop."
+          description="Tailored content based on your interests and the people you follow. Discover trending topics and stay in the loop."
         />
 
         <FeatureCard
@@ -35,18 +34,18 @@ const Features: React.FC = () => {
         <FeatureCard
           icon={faShareAlt}
           title="Create & Share"
-          description="Share your thoughts, photos and videos. Express yourself with rich media content and engage your audience."
+          description="Share your thoughts, photos, and videos. Express yourself with rich media content and engage your audience."
         />
 
         <FeatureCard
           icon={faSearch}
           title="Explore & Discover"
-          description="Tailored content based on your interests and the people you follow. Discover trending topics and stay in the loop."
+          description="Find new content based on your interests and the people you follow. Discover trending topics and expand your horizons."
         />
 
         <FeatureCard
           icon={faBell}
-          title="Real-Time Notification"
+          title="Real-Time Notifications"
           description="Get notified instantly when someone likes, comments, or follows. Stay updated in real-time."
         />
 

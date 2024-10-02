@@ -12,9 +12,9 @@ const UserTestimonialCard: React.FC<UserTestimonialProps> = ({
   name,
 }) => {
   return (
-    <div className="flex p-6 rounded-lg shadow-lg bg-white w-full max-w-[600px] items-center">
+    <div className="flex flex-col sm:flex-row p-6 rounded-lg shadow-lg bg-white w-full max-w-[600px] items-center sm:items-start">
       {/* User Image */}
-      <div className="w-32 h-32 rounded-full overflow-hidden mr-6">
+      <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-4 sm:mb-0 sm:mr-6">
         <img
           src={image}
           alt={name}
@@ -24,7 +24,7 @@ const UserTestimonialCard: React.FC<UserTestimonialProps> = ({
 
       {/* Testimonial Text */}
       <div className="flex flex-col">
-        <p className="text-lg font-medium text-gray-800 mb-4 font-body">
+        <p className="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4 font-body">
           {review}
         </p>
         <span className="text-primary font-semibold font-body">{name}</span>

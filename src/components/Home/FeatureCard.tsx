@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core"; // For TypeScript types
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 interface FeatureCardProps {
   icon: IconDefinition;
@@ -14,14 +14,17 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
 }) => {
   return (
-    <div className="w-[400px] p-6 rounded-[10px] border border-text flex flex-col justify-start items-start gap-3">
+    <div className="w-full sm:w-[400px] p-4 sm:p-6 rounded-lg border border-text flex flex-col justify-start items-start gap-3">
       <div className="flex items-center gap-2">
-        <FontAwesomeIcon icon={icon} className="w-6 h-6 text-secondary" />
-        <h3 className="text-h3 font-bold font-heading leading-tight">
+        <FontAwesomeIcon
+          icon={icon}
+          className="w-5 h-5 sm:w-6 sm:h-6 text-secondary"
+        />
+        <h3 className="text-lg sm:text-h3 font-bold font-heading leading-tight">
           {title}
         </h3>
       </div>
-      <p className="text-base font-medium font-body leading-relaxed">
+      <p className="text-sm sm:text-base font-medium font-body leading-relaxed">
         {description}
       </p>
     </div>
