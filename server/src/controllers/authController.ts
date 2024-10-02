@@ -248,3 +248,37 @@ export const resetPassword = async (req: Request, res: Response) => {
       .json({ message: "Error resetting password", error: err.message });
   }
 };
+
+// Google Login
+export const googleLogin = async (req: Request, res: Response) => {
+  const { email, name, picture, sub: googleId } = req.body; // Google payload
+
+  try {
+    // Find user by Google Id or email
+    let user = await User.findOne({ $or: [{ email }, { googleId }] });
+
+    if (!user) {
+      // If user doesn't exist, create a new user
+      user = new User({
+        fullName: name,
+        email,
+        googleId,
+        profilePicture: picture,
+      });
+
+      await user.save();
+    }
+
+    // Generate a JWT token (Replace with your actual JWT generation method)
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error("Error during Google login:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

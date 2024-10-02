@@ -4,6 +4,7 @@ import {
   login,
   getUserProfile,
   updateUserProfile,
+  googleLogin,
 } from "../controllers/authController";
 import { authenticate } from "../middleware/authMiddleware";
 import {
@@ -47,5 +48,8 @@ router.get("/:userId/followers", getFollowers);
 
 // Fetch all users that a user is following
 router.get("/:userId/following", getFollowing);
+
+// Login with Google
+router.post("/google", googleLogin);
 
 export default router;

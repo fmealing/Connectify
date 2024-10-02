@@ -9,6 +9,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { instance as axios } from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google"; // Updated OAuth library
+import { jwtDecode } from "jwt-decode"; // For decoding the Google token
+
+const clientId =
+  "770837864525-occ70gomjga1oln3pp559l3pc8jlmc0o.apps.googleusercontent.com";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +29,6 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
 
     try {
@@ -33,16 +37,42 @@ const Login: React.FC = () => {
         password,
       });
 
-      const token = response.data.token; // Assuming token is returned
+      const token = response.data.token;
       localStorage.setItem("authToken", token); // Save token to local storage
 
       setLoading(false);
-
       navigate("/profile"); // Redirect to a protected route after login
     } catch (error) {
       setError("Login failed. Please check your credentials.");
       setLoading(false);
     }
+  };
+
+  // Handle Google Login Success
+  const handleGoogleSuccess = async (response: any) => {
+    const { credential } = response;
+    const decodedToken: any = jwtDecode(credential);
+
+    try {
+      // send the decoded user info to your backend to handle OAuth
+      const res = await axios.post("http://localhost:5001/api/users/google", {
+        email: decodedToken.email,
+        name: decodedToken.name,
+        picture: decodedToken.picture,
+        sub: decodedToken.sub, // Google ID
+      });
+
+      // Save the token in localStorage and redirect to profile page
+      localStorage.setItem("authToken", res.data.token);
+      navigate("/profile");
+    } catch (error) {
+      console.error("Error during Google login: ", error);
+    }
+  };
+
+  // Handle Google Login Failure
+  const handleGoogleFailure = (error: any) => {
+    console.error("Google Login Failure: ", error);
   };
 
   return (
@@ -63,19 +93,29 @@ const Login: React.FC = () => {
           {/* Form Section - centered and narrower */}
           <form className="mx-auto max-w-sm" onSubmit={handleLogin}>
             {/* Google Sign-in Button */}
-            <button
-              type="button"
-              className="flex items-center justify-center w-full border border-gray-400 py-4 rounded-full mb-6 hover:bg-gray-100 transition"
-            >
-              <img
-                src="/svg/google-icon.svg" // Use Google icon as an image
-                alt="Google"
-                className="mr-2 w-8 h-8"
+            <div className="mb-6">
+              <GoogleLogin
+                clientId={clientId}
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleFailure}
+                render={(renderProps: any) => (
+                  <button
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                    className="flex items-center justify-center w-full py-4 rounded-full border border-text bg-white shadow-md px-6 "
+                  >
+                    <img
+                      src="/svg/google-icon.svg"
+                      alt="Google"
+                      className="mr-2 w-8 h-8"
+                    />
+                    <span className="text-base font-medium text-text">
+                      Login with Google
+                    </span>
+                  </button>
+                )}
               />
-              <span className="text-base font-medium text-gray-700 font-inter leading-tight">
-                Login with Google
-              </span>
-            </button>
+            </div>
 
             {/* Divider */}
             <div className="flex items-center mb-6">
@@ -150,7 +190,7 @@ const Login: React.FC = () => {
             {/* Sign-in Button */}
             <button
               type="submit"
-              disabled={loading} // Disable while loading
+              disabled={loading}
               className={`mt-14 w-full bg-accent text-white py-4 px-8 rounded-full flex items-center justify-center transition ${
                 loading
                   ? "opacity-50 cursor-not-allowed"

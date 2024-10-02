@@ -5,14 +5,15 @@ import bcrypt from "bcrypt";
 export interface IUser extends Document {
   fullName: string;
   email: string;
-  username: string;
-  passwordHash: string;
+  username?: string;
+  passwordHash?: string; // Optional for OAuth users
   profilePicture: string;
   bio: string;
   posts: mongoose.Types.ObjectId[];
   friends: mongoose.Types.ObjectId[];
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
+  googleId?: string; // Add Google ID for OAuth users
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -30,12 +31,15 @@ const UserSchema: Schema = new Schema(
     },
     username: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true, // Allows null/undefined values but ensures uniqueness
     },
     passwordHash: {
       type: String,
-      required: true,
+      // Only require passwordHash for non-OAuth users
+      required: function (this: IUser) {
+        return !this.googleId;
+      },
     },
     profilePicture: {
       type: String,
@@ -70,27 +74,36 @@ const UserSchema: Schema = new Schema(
         ref: "User",
       },
     ],
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null/undefined values but ensures uniqueness
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields
   }
 );
 
-// Hash the password before saving the user
+// Hash the password before saving the user, only if it's a regular user with a password
 UserSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("passwordHash")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
-  next();
+  if (!this.isModified("passwordHash") || !this.passwordHash) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+    next();
+  } catch (err: any) {
+    next(err);
+  }
 });
 
 // Method to compare passwords
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
-  const isMatch = await bcrypt.compare(candidatePassword, this.passwordHash);
-  console.log("Password Comparison Result: ", isMatch); // Log comparison result
-  return isMatch;
+  if (!this.passwordHash) return false; // No password for OAuth users
+  return await bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
 const User = mongoose.model<IUser>("User", UserSchema);
