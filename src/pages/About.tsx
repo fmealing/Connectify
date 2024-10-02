@@ -84,7 +84,7 @@ const AboutPage: React.FC = () => {
               </span>
               <p className="text-body text-background leading-relaxed">
                 The project runs on passion, ambition, and a healthy dose of
-                "let’s see what happens if I do this."
+                "let&apos;s see what happens if I do this."
               </p>
             </div>
           </div>

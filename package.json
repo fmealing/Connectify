@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.658.1",
     "@aws-sdk/s3-request-presigner": "^3.658.1",
+    "@formspree/react": "^2.5.1",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
