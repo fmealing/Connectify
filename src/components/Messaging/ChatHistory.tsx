@@ -41,18 +41,30 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
-      {messages.map((message) => (
-        <div key={message._id} className="mb-4">
-          <p className="font-semibold">
-            {userDetails[message.sender] || "Loading..."}
-          </p>
-          <p className="text-sm">{message.content}</p>
-          <span className="text-xs text-gray-400">
-            {format(new Date(message.timestamp), "Pp")}
-          </span>
-        </div>
-      ))}
+    <div className="flex-1 p-6 overflow-y-auto bg-gray-50">
+      {messages.map((message) => {
+        const isCurrentUser = message.sender === localStorage.getItem("userId");
+        return (
+          <div
+            key={message._id}
+            className={`mb-4 p-4 rounded-lg shadow-lg ${
+              isCurrentUser
+                ? "bg-primary text-white self-end ml-auto"
+                : "bg-white text-gray-800"
+            } max-w-lg transition duration-300 ease-in-out`}
+          >
+            <div className="flex justify-between">
+              <p className="font-semibold">
+                {userDetails[message.sender] || "Loading..."}
+              </p>
+              <span className="text-xs text-gray-400">
+                {format(new Date(message.timestamp), "Pp")}
+              </span>
+            </div>
+            <p className="text-sm mt-2">{message.content}</p>
+          </div>
+        );
+      })}
     </div>
   );
 };

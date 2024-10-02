@@ -8,8 +8,8 @@ interface PostCardProps {
   imageSrc: string;
   textContent: string;
   date: string;
-  onUpdate: (updatedPost: { content: string; imageUrl: string }) => void; // onUpdate function passed down
-  onDelete: (postId: string) => void; // onDelete function passed down
+  onUpdate: (updatedPost: { content: string; imageUrl: string }) => void;
+  onDelete: (postId: string) => void;
 }
 
 const ProfilePostCard: React.FC<PostCardProps> = ({
@@ -29,9 +29,8 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
     const formData = new FormData();
     formData.append("content", editedContent);
 
-    // Check if there is a new image uploaded
     if (editedImage) {
-      formData.append("image", editedImage); // Use "image" as the field name for file
+      formData.append("image", editedImage);
     }
 
     try {
@@ -46,13 +45,12 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
         }
       );
 
-      // Call the onUpdate function to update the post in the frontend state
       onUpdate({
         content: editedContent,
-        imageUrl: response.data.post.imageUrl || imageSrc, // Use the new image URL if available
+        imageUrl: response.data.post.imageUrl || imageSrc,
       });
 
-      setIsEditing(false); // Close the edit mode
+      setIsEditing(false);
     } catch (error) {
       console.error("Error updating post:", error);
     }
@@ -72,7 +70,6 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
       );
 
       if (response.status === 200) {
-        // Call onDelete function to remove the post from the frontend state
         onDelete(postId);
       }
     } catch (error) {
@@ -81,39 +78,54 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <div className="bg-background shadow-md rounded-lg overflow-hidden w-full max-w-sm h-[400px] flex flex-col">
+    <div className="bg-white shadow-lg rounded-xl overflow-hidden w-full max-w-md flex flex-col transform transition duration-300 hover:shadow-xl">
       {imageSrc && !isEditing && (
         <div
-          className="w-full h-48 bg-cover bg-center"
+          className="w-full h-48 bg-cover bg-center rounded-t-xl"
           style={{ backgroundImage: `url(${imageSrc})` }}
         ></div>
       )}
 
       {isEditing ? (
-        <div className="p-6">
+        <div className="p-6 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg shadow-inner">
           <textarea
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
-            className="w-full p-4 mb-4 border border-gray-300 rounded-md focus:outline-none"
-            placeholder="Edit content"
+            className="w-full p-4 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-primary-light shadow-md transition duration-300"
+            placeholder="Edit your post content"
+            rows={4}
           />
-          <input
-            type="file"
-            onChange={(e) =>
-              e.target.files && setEditedImage(e.target.files[0])
-            }
-            className="mb-4"
-          />
-          <div className="flex gap-2">
+          <label className="block mb-2 text-gray-600">Change Image:</label>
+
+          {/* Custom file input button */}
+          <div className="mb-4">
+            <label className="block w-full bg-primary text-white text-center py-2 rounded-full cursor-pointer hover:bg-primary-dark transition duration-300">
+              Upload New Image
+              <input
+                type="file"
+                onChange={(e) =>
+                  e.target.files && setEditedImage(e.target.files[0])
+                }
+                className="hidden"
+              />
+            </label>
+            {editedImage && (
+              <p className="mt-2 text-sm text-gray-600">
+                Image selected: {editedImage.name}
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-4">
             <button
               onClick={handleSave}
-              className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition"
+              className="flex-1 bg-primary text-white py-2 px-4 rounded-full shadow-lg hover:bg-primary-dark transition duration-300 transform hover:scale-105"
             >
               Save
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-500 transition"
+              className="flex-1 bg-gray-400 text-white py-2 px-4 rounded-full shadow-lg hover:bg-gray-500 transition duration-300 transform hover:scale-105"
             >
               Cancel
             </button>
@@ -123,17 +135,17 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
         <div className="p-6">
           <p className="text-sm text-gray-500 mb-2">{date}</p>
           <p className="text-base text-gray-800 mb-4">{textContent}</p>
-          <div className="flex gap-2">
+          <div className="flex gap-4">
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition flex items-center gap-2"
+              className="flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300"
             >
               <FontAwesomeIcon icon={faEdit} />
               Edit
             </button>
             <button
               onClick={handleDelete}
-              className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition flex items-center gap-2"
+              className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition duration-300"
             >
               <FontAwesomeIcon icon={faTrash} />
               Delete

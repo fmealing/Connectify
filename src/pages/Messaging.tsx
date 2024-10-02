@@ -85,20 +85,33 @@ const MessagingPage: React.FC = () => {
     const decoded: any = jwtDecode(token);
     const userId = decoded.id;
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/conversations/create",
-        { userIds: [userId, participantId] }, // Send the user IDs to create a conversation
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setConversations([...conversations, response.data]);
-      setSelectedConversation(response.data); // Automatically select the newly created conversation
-    } catch (error) {
-      console.error("Error creating conversation:", error);
+    // Check if conversation already exists
+    const existingConversation = conversations.find((conversation) =>
+      conversation.participants.some(
+        (participant) => participant._id === participantId
+      )
+    );
+
+    if (existingConversation) {
+      // Select the existing conversation
+      setSelectedConversation(existingConversation);
+    } else {
+      // If no existing conversation, create a new one
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/api/conversations/create",
+          { userIds: [userId, participantId] },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setConversations([...conversations, response.data]);
+        setSelectedConversation(response.data); // Automatically select the newly created conversation
+      } catch (error) {
+        console.error("Error creating conversation:", error);
+      }
     }
   };
 
@@ -165,7 +178,8 @@ const MessagingPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-[calc(100vh-64px)] bg-gray-100">
+      {/* Conversations List */}
       <ConversationsList
         conversations={conversations}
         followers={followers}
@@ -173,17 +187,20 @@ const MessagingPage: React.FC = () => {
           const selected = conversations.find((c) => c._id === conversationId);
           setSelectedConversation(selected || null);
         }}
-        onCreateConversation={createConversation} // Add the createConversation function here
+        onCreateConversation={createConversation}
       />
 
+      {/* Chat History */}
       {selectedConversation ? (
-        <div className="w-3/4">
+        <div className="w-3/4 bg-white shadow-md rounded-lg m-4 p-4 flex flex-col justify-between">
           <ChatHistory messages={messages} />
           <ChatInput onSendMessage={sendMessage} />
         </div>
       ) : (
-        <div className="w-3/4 flex items-center justify-center">
-          <p>Select a conversation to start chatting</p>
+        <div className="w-3/4 flex items-center justify-center text-text">
+          <h2 className="font-heading text-h2">
+            Select a conversation to start chatting
+          </h2>
         </div>
       )}
     </div>
