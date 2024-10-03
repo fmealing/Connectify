@@ -10,12 +10,23 @@ import followRoutes from "./routes/followRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import imageRoutes from "./routes/imageRoutes";
 import Pusher from "pusher";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
 
 // Load environment variables from a .env file
 dotenv.config();
 
 // create express app
 const app = express();
+
+// rate limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
 
 // Middleware
 app.use(cors());
@@ -36,6 +47,12 @@ export const pusher = new Pusher({
   cluster: process.env.PUSHER_CLUSTER as string,
   useTLS: true,
 });
+
+// Security
+app.use(helmet());
+app.use(limiter);
+app.use(mongoSanitize());
+app.use(xss());
 
 // Define routes
 app.use("/api/users", authRoutes);
