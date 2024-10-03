@@ -5,6 +5,7 @@ import ChatInput from "../components/Messaging/ChatInput";
 import ConversationsList from "../components/Messaging/ConversationsList";
 import { useEffect, useState } from "react";
 import pusher from "../pusher";
+import React from "react";
 
 interface User {
   _id: string;

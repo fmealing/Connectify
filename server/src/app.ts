@@ -48,7 +48,13 @@ const limiter = rateLimit({
 });
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://connectify-backend-314.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "10kb" })); // Limit payload size
 app.use(helmet()); // Security headers
 app.use(limiter); // Rate limiting

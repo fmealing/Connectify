@@ -3,6 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import CreatePostCard from "../components/Feed/CreatePostCard";
 import FeedPostCard from "../components/Feed/FeedPostCard";
+import React from "react";
 
 // Comment interface
 interface Comment {
