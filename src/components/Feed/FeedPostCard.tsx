@@ -52,7 +52,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
       if (liked) {
         // Send API request to unlike the post
         await axios.post(
-          "http://localhost:5001/api/interactions/posts/unlike",
+          "/api/interactions/posts/unlike",
           { postId },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
@@ -60,7 +60,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
       } else {
         // Send API request to like the post
         await axios.post(
-          "http://localhost:5001/api/interactions/posts/like",
+          "/api/interactions/posts/like",
           { postId },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
@@ -82,7 +82,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
 
       // Send API request to submit a new comment
       const response = await axios.post(
-        "http://localhost:5001/api/comments/create",
+        "/api/comments/create",
         { postId, content: newComment },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -110,9 +110,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/comments/${postId}`
-        );
+        const response = await axios.get(`/api/comments/${postId}`);
         setComments(response.data.comments);
       } catch (error) {
         console.error("Error fetching comments", error);

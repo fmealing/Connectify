@@ -52,7 +52,7 @@ const Login: React.FC = () => {
 
     try {
       // send the decoded user info to your backend to handle OAuth
-      const res = await axios.post("http://localhost:5001/api/users/google", {
+      const res = await axios.post("/api/users/google", {
         email: decodedToken.email,
         name: decodedToken.name,
         picture: decodedToken.picture,

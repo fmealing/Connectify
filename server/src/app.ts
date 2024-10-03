@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -14,12 +15,30 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
+import compression from "compression";
+import morgan from "morgan";
+import { Request, Response, NextFunction } from "express";
 
 // Load environment variables from a .env file
 dotenv.config();
 
 // create express app
 const app = express();
+
+// Ensure required environment variables are set
+const requiredEnvVars = [
+  "MONGO_URI",
+  "PUSHER_APP_ID",
+  "PUSHER_KEY",
+  "PUSHER_SECRET",
+  "PUSHER_CLUSTER",
+];
+requiredEnvVars.forEach((envVar) => {
+  if (!process.env[envVar]) {
+    console.error(`Error: Missing required environment variable ${envVar}`);
+    process.exit(1);
+  }
+});
 
 // rate limiter
 const limiter = rateLimit({
@@ -30,12 +49,17 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10kb" })); // Limit payload size
+app.use(helmet()); // Security headers
+app.use(limiter); // Rate limiting
+app.use(mongoSanitize()); // Prevent NoSQL injection
+app.use(xss()); // Prevent XSS attacks
+app.use(compression()); // GZIP compression
+app.use(morgan("combined")); // HTTP request logging
 
 // MongoDB connection
-const mongoUri = process.env.MONGO_URI as string;
 mongoose
-  .connect(mongoUri)
+  .connect(process.env.MONGO_URI as string)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Failed to connect to MongoDB", err));
 
@@ -48,12 +72,6 @@ export const pusher = new Pusher({
   useTLS: true,
 });
 
-// Security
-app.use(helmet());
-app.use(limiter);
-app.use(mongoSanitize());
-app.use(xss());
-
 // Define routes
 app.use("/api/users", authRoutes);
 app.use("/api/posts", postRoutes);
@@ -62,6 +80,26 @@ app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
 app.use("/api/images", imageRoutes);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/build")));
+
+// Catch-all route to serve React app
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+});
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Internal Server Error",
+  });
+  next();
+});
 
 // Start the server
 const PORT = process.env.PORT || 5001;

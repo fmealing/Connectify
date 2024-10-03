@@ -24,9 +24,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     // Fetch followers count from API using the userId
     const fetchFollowers = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`
-        );
+        const response = await axios.get(`/api/users/${userId}/followers`);
         setFollowers(response.data.followers.length); // Set followers count from API
       } catch (error) {
         console.error("Error fetching followers", error);

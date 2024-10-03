@@ -47,14 +47,11 @@ const MessagingPage: React.FC = () => {
       }
 
       try {
-        const response = await axios.get(
-          "http://localhost:5001/api/conversations",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get("/api/conversations", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setConversations(response.data);
       } catch (error) {
         console.error("Error fetching conversations:", error);
@@ -64,9 +61,7 @@ const MessagingPage: React.FC = () => {
     const fetchFollowers = async () => {
       if (!userId) return;
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`
-        );
+        const response = await axios.get(`/api/users/${userId}/followers`);
         setFollowers(response.data.followers);
       } catch (error) {
         console.error("Error fetching followers:", error);
@@ -95,7 +90,7 @@ const MessagingPage: React.FC = () => {
     } else {
       try {
         const response = await axios.post(
-          "http://localhost:5001/api/conversations/create",
+          "/api/conversations/create",
           { userIds: [userId, participantId] },
           {
             headers: {
@@ -116,7 +111,7 @@ const MessagingPage: React.FC = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/conversations/${conversationId}/messages`,
+        `/api/conversations/${conversationId}/messages`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -154,7 +149,7 @@ const MessagingPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:5001/api/conversations/messages",
+        "/api/conversations/messages",
         {
           conversationId: selectedConversation._id,
           senderId,

@@ -56,30 +56,24 @@ const Profile: React.FC = () => {
 
       try {
         // Fetch user profile
-        const profileResponse = await axios.get(
-          `http://localhost:5001/api/users/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const profileResponse = await axios.get(`/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setProfile(profileResponse.data); // Set user profile data
 
         // Fetch posts
-        const postsResponse = await axios.get(
-          `http://localhost:5001/api/posts/user/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const postsResponse = await axios.get(`/api/posts/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setPosts(postsResponse.data); // Set posts data
 
         // Fetch followers
         const followersResponse = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`,
+          `/api/users/${userId}/followers`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -108,7 +102,7 @@ const Profile: React.FC = () => {
       if (!profile) return;
 
       const response = await axios.put(
-        `http://localhost:5001/api/users/profile`,
+        `/api/users/profile`,
         { ...profile, ...updatedFields }, // Merge the current profile with updated fields
         {
           headers: {
@@ -134,16 +128,12 @@ const Profile: React.FC = () => {
     formData.append("image", file); // Append the file to the form data
 
     try {
-      const response = await axios.put(
-        `http://localhost:5001/api/users/profile`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.put(`/api/users/profile`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setProfile(response.data); // Update local state with the updated profile data
     } catch (error) {
       console.error("Error uploading image", error);

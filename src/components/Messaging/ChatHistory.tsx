@@ -19,9 +19,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   const fetchUserDetails = async (userId: string) => {
     if (!userDetails[userId]) {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/api/users/${userId}`
-        );
+        const response = await axios.get(`/api/users/${userId}`);
         const user = response.data;
         setUserDetails((prevDetails) => ({
           ...prevDetails,

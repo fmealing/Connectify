@@ -23,13 +23,14 @@ const AboutPage: React.FC = () => {
             Connectify is a fully functioning social media platform designed to
             bring people together (or, you know, keep you endlessly scrolling).
             But here's the twist: it's also a portfolio project. Yes, everything
-            works, but more than that, it’s been an amazing learning experience.
+            works, but more than that, it&apos;s been an amazing learning
+            experience.
           </p>
           <p className="text-body text-gray-600 leading-relaxed mt-4">
             From building complex user interfaces to tackling backend logic,
-            Connectify represents a journey of web development growth. It's not
-            just about social networking; it's about pushing boundaries, solving
-            problems, and learning a ton along the way.
+            Connectify represents a journey of web development growth. It&apos;s
+            not just about social networking; it's about pushing boundaries,
+            solving problems, and learning a ton along the way.
           </p>
         </section>
 
@@ -46,9 +47,9 @@ const AboutPage: React.FC = () => {
             recruiters.
           </p>
           <p className="text-body leading-relaxed mt-4">
-            If you’re here, know that this platform isn’t just for likes and
-            comments; it’s also about growth, perseverance, and overcoming the
-            occasional bug-induced meltdown.
+            If you&apos;re here, know that this platform isn&apos;t just for
+            likes and comments; it&apos;s also about growth, perseverance, and
+            overcoming the occasional bug-induced meltdown.
           </p>
         </section>
 
@@ -73,8 +74,8 @@ const AboutPage: React.FC = () => {
                 <FontAwesomeIcon icon={faSyncAlt} size="lg" />
               </span>
               <p className="text-body text-background leading-relaxed">
-                Connectify’s backend has been rewritten more times than I care
-                to admit.
+                Connectify&apos;s backend has been rewritten more times than I
+                care to admit.
               </p>
             </div>
 
