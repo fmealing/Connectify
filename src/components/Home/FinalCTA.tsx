@@ -1,5 +1,6 @@
 import React from "react";
 
+// Final Call-To-Action component
 const FinalCTA: React.FC = () => {
   return (
     <section className="bg-gradient-to-r from-primary to-secondary py-20 px-6 text-center text-white">
@@ -13,7 +14,7 @@ const FinalCTA: React.FC = () => {
         Join Connectify today and start building meaningful connections.
       </p>
 
-      {/* CTA Button */}
+      {/* Call-to-Action Button */}
       <a
         href="/signup"
         className="px-10 py-4 bg-accent text-white font-semibold rounded-md shadow-lg hover:bg-accent-dark transition-transform transform hover:scale-105 text-base sm:text-lg md:text-xl"

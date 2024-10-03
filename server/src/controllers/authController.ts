@@ -134,7 +134,6 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       blobStream.on("finish", async () => {
         // Construct the public URL of the uploaded image
         imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-        console.log("Image URL updated to: ", imageUrl);
 
         // Update the user's profile picture after the file is uploaded
         const updatedUser = await User.findByIdAndUpdate(
@@ -170,51 +169,6 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: "Error updating profile", error: err.message });
-  }
-};
-
-// Change Password
-export const requestResetPassword = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-
-    // Find the user with the provided email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Generate a token and expiration date
-    const resetToken = crypto.randomBytes(20).toString("hex");
-    const tokenExpiration = Date.now() + 3600000; // 1 hour
-
-    // Save the token and expiration date to the user's document
-    (user as any).resetPasswordToken = resetToken;
-    (user as any).resetPasswordExpires = tokenExpiration;
-
-    await user.save();
-
-    // Create the reset URL
-    const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
-    const message = `You have requested a password reset. Please click the following link to reset your password: ${resetUrl}`;
-
-    // Submit the form data to Formspree
-    const formData = {
-      email: user.email, // Recipient's email
-      message, // The email body containing the reset link
-    };
-
-    // Formspree endpoint
-    const formEndpoint = "https://formspree.io/f/xgvwgkbn";
-
-    await axios.post(formEndpoint, formData);
-
-    res.status(200).json({ message: "Password reset link sent to your email" });
-  } catch (error) {
-    const err = error as Error;
-    res
-      .status(500)
-      .json({ message: "Error resetting password", error: err.message });
   }
 };
 

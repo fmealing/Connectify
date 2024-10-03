@@ -4,12 +4,22 @@ import axios from "axios";
 import FeedPostCard from "../components/Feed/FeedPostCard";
 import { jwtDecode } from "jwt-decode";
 
+// Define the structure of user posts
+interface PostProps {
+  _id: string;
+  imageUrl: string;
+  content: string;
+  createdAt: string;
+}
+
+// Define the structure of user profile data
 interface UserProfileProps {
-  name: string;
+  fullName: string;
   username: string;
   followersCount: number;
   profilePicture: string;
-  posts: { imageSrc: string; textContent: string; date: string }[];
+  followers: string[]; // Store followers as an array of user IDs
+  posts: PostProps[];
   following: string[];
 }
 
@@ -22,7 +32,8 @@ const UserProfilePage: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      const decodedToken: any = jwtDecode(token);
+      // Ensure jwtDecode is correctly typed
+      const decodedToken: { id: string } = jwtDecode(token);
       setLoggedInUserId(decodedToken.id);
     }
 
@@ -39,12 +50,11 @@ const UserProfilePage: React.FC = () => {
         );
 
         // Combine user data and posts
-        const combinedUserData = {
+        const combinedUserData: UserProfileProps = {
           ...userResponse.data,
           posts: postsResponse.data, // Add the posts to userData
         };
 
-        // Update state with user data and posts
         setUserData(combinedUserData);
 
         // Check if the logged-in user is following this profile user
@@ -79,29 +89,23 @@ const UserProfilePage: React.FC = () => {
         ? { unfollowUserId: userId } // When unfollowing, send unfollowUserId
         : { followUserId: userId }; // When following, send followUserId
 
-      const response = await axios.post(url, data, {
+      await axios.post(url, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (isFollowing) {
-        setIsFollowing(false);
-        if (userData) {
-          setUserData({
-            ...userData,
-            followersCount: userData.followersCount - 1,
-          });
-        }
-      } else {
-        setIsFollowing(true);
-        if (userData) {
-          setUserData({
-            ...userData,
-            followersCount: userData.followersCount + 1,
-          });
-        }
+      // Update UI based on follow/unfollow action
+      if (userData) {
+        setUserData({
+          ...userData,
+          followersCount: isFollowing
+            ? userData.followersCount - 1
+            : userData.followersCount + 1,
+        });
       }
+
+      setIsFollowing(!isFollowing);
     } catch (error) {
       console.error("Error following/unfollowing user", error);
     }
@@ -124,7 +128,7 @@ const UserProfilePage: React.FC = () => {
           <h2 className="text-h2 font-heading">{userData.fullName}</h2>
           <p className="text-sm text-gray-600">@{userData.username}</p>
           <p className="text-sm text-gray-600">
-            {userData.followers.length} Followers
+            {userData.followersCount} Followers
           </p>
           <button
             onClick={handleFollowUnfollow}
@@ -143,9 +147,9 @@ const UserProfilePage: React.FC = () => {
           {userData.fullName}'s Posts
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {userData.posts.map((post, index) => (
+          {userData.posts.map((post) => (
             <FeedPostCard
-              key={index}
+              key={post._id}
               postId={post._id}
               imageSrc={post.imageUrl}
               content={post.content}

@@ -1,11 +1,13 @@
 import React from "react";
 
+// Define the prop types for the UserTestimonialCard component
 interface UserTestimonialProps {
-  image: string;
-  review: string;
-  name: string;
+  image: string; // URL of the user's image
+  review: string; // User's testimonial text
+  name: string; // User's name
 }
 
+// Functional component to display a user's testimonial
 const UserTestimonialCard: React.FC<UserTestimonialProps> = ({
   image,
   review,

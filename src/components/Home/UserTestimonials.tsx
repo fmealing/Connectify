@@ -1,9 +1,10 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css"; // Import Swiper styles
-import { Navigation, Pagination } from "swiper/modules"; // Import the modules from the correct path
-import UserTestimonialCard from "./UserTestimonialCard";
+import { Navigation, Pagination } from "swiper/modules"; // Import necessary Swiper modules
+import UserTestimonialCard from "./UserTestimonialCard"; // Import the UserTestimonialCard component
 
+// UserTestimonials component that displays user reviews in a Swiper carousel
 const UserTestimonials: React.FC = () => {
   return (
     <section className="py-16 px-4 bg-background text-text">
@@ -16,27 +17,27 @@ const UserTestimonials: React.FC = () => {
         their stories.
       </p>
 
-      {/* Swiper Carousel */}
+      {/* Swiper Carousel for testimonials */}
       <Swiper
-        spaceBetween={30}
-        slidesPerView={1}
+        spaceBetween={30} // Space between slides
+        slidesPerView={1} // Default number of slides per view
         breakpoints={{
           640: {
-            slidesPerView: 1,
+            slidesPerView: 1, // 1 slide on small screens
           },
           768: {
-            slidesPerView: 2,
-            spaceBetween: 40,
+            slidesPerView: 2, // 2 slides on medium screens
+            spaceBetween: 40, // Increased spacing for medium screens
           },
           1024: {
-            slidesPerView: 3,
-            spaceBetween: 50,
+            slidesPerView: 3, // 3 slides on large screens
+            spaceBetween: 50, // Increased spacing for large screens
           },
-        }} // Adjust the number of slides based on screen width
-        navigation
-        pagination={{ clickable: true }}
-        modules={[Navigation, Pagination]} // Use modules here
-        className="max-w-[1200px] mx-auto"
+        }}
+        navigation // Enable navigation arrows
+        pagination={{ clickable: true }} // Enable pagination dots
+        modules={[Navigation, Pagination]} // Use navigation and pagination modules
+        className="max-w-[1200px] mx-auto" // Center the Swiper carousel
       >
         {/* Testimonial Slide 1 */}
         <SwiperSlide className="flex justify-center">

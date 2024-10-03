@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import for redirection
+import { useNavigate } from "react-router-dom";
 
 interface ProfileCardProps {
-  userId: string; // Added userId prop
+  userId: string;
   avatar: string;
   name: string;
   username: string;
-  followersCount: number; // Use followersCount for clarity
+  followersCount: number;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -15,13 +15,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   avatar,
   name,
   username,
-  followersCount, // Renamed prop to followersCount for consistency
+  followersCount,
 }) => {
-  const [followers, setFollowers] = useState(followersCount); // Initialize followers state with passed value
-  const navigate = useNavigate(); // Hook for navigation
+  const [followers, setFollowers] = useState(followersCount);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch followers count from API using the userId (if needed for real-time update)
+    // Fetch followers count from API using the userId
     const fetchFollowers = async () => {
       try {
         const response = await axios.get(

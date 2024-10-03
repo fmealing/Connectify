@@ -12,9 +12,6 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google"; // Updated OAuth library
 import { jwtDecode } from "jwt-decode"; // For decoding the Google token
 
-const clientId =
-  "770837864525-occ70gomjga1oln3pp559l3pc8jlmc0o.apps.googleusercontent.com";
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,8 +68,8 @@ const Login: React.FC = () => {
   };
 
   // Handle Google Login Failure
-  const handleGoogleFailure = (error: any) => {
-    console.error("Google Login Failure: ", error);
+  const handleGoogleFailure = () => {
+    console.error("Google Login Failure");
   };
 
   return (
@@ -95,25 +92,8 @@ const Login: React.FC = () => {
             {/* Google Sign-in Button */}
             <div className="mb-6">
               <GoogleLogin
-                clientId={clientId}
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleFailure}
-                render={(renderProps: any) => (
-                  <button
-                    onClick={renderProps.onClick}
-                    disabled={renderProps.disabled}
-                    className="flex items-center justify-center w-full py-4 rounded-full border border-text bg-white shadow-md px-6 "
-                  >
-                    <img
-                      src="/svg/google-icon.svg"
-                      alt="Google"
-                      className="mr-2 w-8 h-8"
-                    />
-                    <span className="text-base font-medium text-text">
-                      Login with Google
-                    </span>
-                  </button>
-                )}
               />
             </div>
 

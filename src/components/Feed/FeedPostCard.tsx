@@ -3,6 +3,7 @@ import { faCommentDots, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 
+// Comment interface defining the structure of a comment
 interface Comment {
   _id: string;
   content: string;
@@ -10,6 +11,7 @@ interface Comment {
   createdAt: string;
 }
 
+// FeedPostCardProps interface defining the props structure
 interface FeedPostCardProps {
   postId: string;
   imageSrc?: string;
@@ -29,8 +31,9 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   initiallyLiked = false,
   initialComments = [],
 }) => {
+  // Constants and state hooks for managing likes, comments, and other interactions
   const maxLength = 100;
-  const isTextTruncated = content?.length > maxLength;
+  const isTextTruncated = content.length > maxLength;
   const displayedText = isTextTruncated
     ? content.slice(0, maxLength) + "..."
     : content;
@@ -41,12 +44,13 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   const [newComment, setNewComment] = useState<string>("");
   const [showComments, setShowComments] = useState(false); // Toggle visibility for comments
 
-  // Handle post like/unlike
+  // Function to handle liking/unliking a post
   const handleLike = async () => {
     try {
       const authToken = localStorage.getItem("authToken");
 
       if (liked) {
+        // Send API request to unlike the post
         await axios.post(
           "http://localhost:5001/api/interactions/posts/unlike",
           { postId },
@@ -54,6 +58,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
         );
         setLikesCount((prevCount) => prevCount - 1);
       } else {
+        // Send API request to like the post
         await axios.post(
           "http://localhost:5001/api/interactions/posts/like",
           { postId },
@@ -62,44 +67,46 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
         setLikesCount((prevCount) => prevCount + 1);
       }
 
-      setLiked(!liked);
+      setLiked(!liked); // Toggle the liked state
     } catch (error) {
       console.error("Error liking/unliking post", error);
     }
   };
 
-  // Handle comment creation
+  // Function to handle submitting a new comment
   const handleCommentSubmit = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim()) return; // Avoid submitting empty comments
 
     try {
       const authToken = localStorage.getItem("authToken");
 
+      // Send API request to submit a new comment
       const response = await axios.post(
         "http://localhost:5001/api/comments/create",
         { postId, content: newComment },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
 
-      setComments((prevComments) => [...prevComments, response.data.comment]);
-      setNewComment(""); // Reset input field
+      setComments((prevComments) => [...prevComments, response.data.comment]); // Add new comment to state
+      setNewComment(""); // Reset the input field
     } catch (error) {
       console.error("Error submitting comment", error);
     }
   };
 
-  // Toggle comments visibility
+  // Function to toggle comment visibility
   const handleCommentToggle = () => {
     setShowComments(!showComments);
   };
 
-  // Format the date
+  // Format the post date to a readable format
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
+  // Fetch comments for the post when component mounts
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -117,6 +124,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
 
   return (
     <div className="bg-background shadow-md rounded-lg overflow-hidden w-full h-auto flex flex-col">
+      {/* Image Section */}
       {imageSrc ? (
         <div
           className="w-full h-48 bg-cover bg-center"
@@ -128,6 +136,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
         </div>
       )}
 
+      {/* Post Content Section */}
       <div className="font-body p-4 flex-1 flex flex-col justify-between">
         <p className="text-sm text-gray-500 mb-2">{formattedDate}</p>
         <p
@@ -137,6 +146,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
           {displayedText}
         </p>
 
+        {/* Like and Comment Buttons */}
         <div className="flex items-center justify-between">
           <button
             onClick={handleLike}
@@ -158,10 +168,10 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
           </button>
         </div>
 
-        {/* Display Comments Section */}
+        {/* Comments Section */}
         {showComments && (
           <div className="mt-4">
-            {/* Add Comment Form - Above the existing comments */}
+            {/* Add Comment Input */}
             <div className="mb-4">
               <input
                 type="text"

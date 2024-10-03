@@ -20,7 +20,7 @@ export const authenticate = (
 
     (req as any).user = decoded; // Attach the decoded token (with user info) to the request object
 
-    // Ensure the `user` object contains the `id`
+    // Ensure the 'user' object contains the 'id'
     next();
   } catch (error) {
     console.error("Token verification failed:", error);
