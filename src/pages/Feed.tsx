@@ -3,7 +3,6 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import CreatePostCard from "../components/Feed/CreatePostCard";
 import FeedPostCard from "../components/Feed/FeedPostCard";
-import React from "react";
 
 // Comment interface
 interface Comment {
@@ -50,7 +49,7 @@ const Feed = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("/api/posts");
+        const response = await axios.get("http://localhost:5001/api/posts");
         setPosts(response.data);
       } catch (error) {
         console.error(error);

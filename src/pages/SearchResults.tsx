@@ -20,14 +20,14 @@ const SearchResultsPage: React.FC = () => {
       try {
         if (filter === "All" || filter === "Posts") {
           const postResponse = await axios.get(
-            `/api/posts/search/posts?search=${query}`
+            `http://localhost:5001/api/posts/search/posts?search=${query}`
           );
           setPosts(postResponse.data);
         }
 
         if (filter === "All" || filter === "Profiles") {
           const profileResponse = await axios.get(
-            `/api/users/search/users?search=${query}`
+            `http://localhost:5001/api/users/search/users?search=${query}`
           );
           setProfiles(profileResponse.data);
         }

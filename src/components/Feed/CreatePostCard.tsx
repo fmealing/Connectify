@@ -24,7 +24,7 @@ const CreatePostCard: React.FC = () => {
         formData.append("image", imageUrl); // Append image file to FormData object
 
         const imageUploadResponse = await axios.post(
-          "/api/images/upload", // Replace with your image upload endpoint
+          "http://localhost:5001/api/images/upload", // Replace with your image upload endpoint
           formData,
           {
             headers: {
@@ -39,7 +39,7 @@ const CreatePostCard: React.FC = () => {
       // Step 2: Create the post by sending post content and the image URL to the server
       const token = localStorage.getItem("authToken"); // Retrieve the auth token from localStorage
       await axios.post(
-        "/api/posts/create", // Replace with your post creation endpoint
+        "http://localhost:5001/api/posts/create", // Replace with your post creation endpoint
         {
           content: postContent, // Post content
           imageUrl: uploadedImageUrl, // Optional: uploaded image URL

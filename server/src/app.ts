@@ -12,11 +12,7 @@ import messageRoutes from "./routes/messageRoutes";
 import imageRoutes from "./routes/imageRoutes";
 import Pusher from "pusher";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
 import compression from "compression";
-import morgan from "morgan";
 import { Request, Response, NextFunction } from "express";
 
 // Load environment variables from a .env file
@@ -40,28 +36,11 @@ requiredEnvVars.forEach((envVar) => {
   }
 });
 
-// rate limiter
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again after 15 minutes",
-});
-
 // Middleware
-app.use(
-  cors({
-    origin: "https://connectify-backend-314.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json({ limit: "10kb" })); // Limit payload size
 app.use(helmet()); // Security headers
-app.use(limiter); // Rate limiting
-app.use(mongoSanitize()); // Prevent NoSQL injection
-app.use(xss()); // Prevent XSS attacks
 app.use(compression()); // GZIP compression
-app.use(morgan("combined")); // HTTP request logging
 
 // MongoDB connection
 mongoose

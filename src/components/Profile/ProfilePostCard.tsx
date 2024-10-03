@@ -34,12 +34,16 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
     }
 
     try {
-      const response = await axios.put(`/api/posts/${postId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:5001/api/posts/${postId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       onUpdate({
         content: editedContent,
@@ -56,11 +60,14 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.delete(`/api/posts/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.delete(
+        `http://localhost/api/posts/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         onDelete(postId);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import FeedPostCard from "../src/components/Feed/FeedPostCard";
+import FeedPostCard from "../components/Feed/FeedPostCard";
 import { jwtDecode } from "jwt-decode";
 
 // Define the structure of user posts
@@ -40,10 +40,14 @@ const UserProfilePage: React.FC = () => {
     const fetchUserProfileAndPosts = async () => {
       try {
         // Fetch the user profile
-        const userResponse = await axios.get(`/api/users/${userId}`);
+        const userResponse = await axios.get(
+          `http://localhost:5001/api/users/${userId}`
+        );
 
         // Fetch the posts for the user
-        const postsResponse = await axios.get(`/api/posts/user/${userId}`);
+        const postsResponse = await axios.get(
+          `http://localhost:5001/api/posts/user/${userId}`
+        );
 
         // Combine user data and posts
         const combinedUserData: UserProfileProps = {
@@ -77,7 +81,9 @@ const UserProfilePage: React.FC = () => {
         return;
       }
 
-      const url = isFollowing ? "/api/follow/unfollow" : "/api/follow/follow";
+      const url = isFollowing
+        ? "http://localhost:5001/api/follow/unfollow"
+        : "http://localhost:5001/api/follow/follow";
 
       const data = isFollowing
         ? { unfollowUserId: userId } // When unfollowing, send unfollowUserId
@@ -122,7 +128,7 @@ const UserProfilePage: React.FC = () => {
           <h2 className="text-h2 font-heading">{userData.fullName}</h2>
           <p className="text-sm text-gray-600">@{userData.username}</p>
           <p className="text-sm text-gray-600">
-            {userData.followersCount} Followers
+            {userData.followers.length} Followers
           </p>
           <button
             onClick={handleFollowUnfollow}

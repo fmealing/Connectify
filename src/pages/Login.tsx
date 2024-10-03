@@ -29,10 +29,13 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("users/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5001/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
 
       const token = response.data.token;
       localStorage.setItem("authToken", token); // Save token to local storage
@@ -52,7 +55,7 @@ const Login: React.FC = () => {
 
     try {
       // send the decoded user info to your backend to handle OAuth
-      const res = await axios.post("/api/users/google", {
+      const res = await axios.post("http://localhost:5001/api/users/google", {
         email: decodedToken.email,
         name: decodedToken.name,
         picture: decodedToken.picture,
