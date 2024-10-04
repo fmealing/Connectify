@@ -1,19 +1,19 @@
-import path from "path";
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import dotenv from "dotenv";
-import authRoutes from "./routes/authRoutes";
-import postRoutes from "./routes/postRoutes";
-import commentRoutes from "./routes/commentRoutes";
-import interactionRoutes from "./routes/interactionRoutes";
-import followRoutes from "./routes/followRoutes";
-import messageRoutes from "./routes/messageRoutes";
-import imageRoutes from "./routes/imageRoutes";
-import Pusher from "pusher";
-import helmet from "helmet";
-import compression from "compression";
-import { Request, Response, NextFunction } from "express";
+const path = require("path");
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const Pusher = require("pusher");
+const helmet = require("helmet");
+const compression = require("compression");
+
+const authRoutes = require("./routes/authRoutes");
+const postRoutes = require("./routes/postRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const interactionRoutes = require("./routes/interactionRoutes");
+const followRoutes = require("./routes/followRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const imageRoutes = require("./routes/imageRoutes");
 
 // Load environment variables from a .env file
 dotenv.config();

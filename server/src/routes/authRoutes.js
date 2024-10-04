@@ -1,21 +1,40 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   signup,
   login,
   getUserProfile,
   updateUserProfile,
   googleLogin,
-} from "../controllers/authController";
-import { authenticate } from "../middleware/authMiddleware";
-import {
+} = require("../controllers/authController");
+const { authenticate } = require("../middleware/authMiddleware");
+const {
   deleteUser,
   getAllUsers,
   getFollowers,
   getFollowing,
   getUserById,
   getUsers,
-} from "../controllers/userController";
-import { imageUploadMiddleware } from "../controllers/imageController";
+} = require("../controllers/userController");
+const { imageUploadMiddleware } = require("../controllers/imageController");
+
+// import express from "express";
+// import {
+//   signup,
+//   login,
+//   getUserProfile,
+//   updateUserProfile,
+//   googleLogin,
+// } from "../controllers/authController";
+// import { authenticate } from "../middleware/authMiddleware";
+// import {
+//   deleteUser,
+//   getAllUsers,
+//   getFollowers,
+//   getFollowing,
+//   getUserById,
+//   getUsers,
+// } from "../controllers/userController";
+// import { imageUploadMiddleware } from "../controllers/imageController";
 
 const router = express.Router();
 

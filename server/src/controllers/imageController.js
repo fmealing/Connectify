@@ -1,8 +1,12 @@
-import { Request, Response } from "express";
-import multer from "multer";
-import path from "path";
-import { Storage } from "@google-cloud/storage";
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
+const { Storage } = require("@google-cloud/storage");
+const multer = require("multer");
+
+// import { Request, Response } from "express";
+// import multer from "multer";
+// import path from "path";
+// import { Storage } from "@google-cloud/storage";
+// import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();

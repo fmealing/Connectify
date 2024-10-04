@@ -1,11 +1,20 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createConversation,
   getConversationMessages,
   getConversationsById,
   sendMessage,
-} from "../controllers/messageController";
-import { authenticate } from "../middleware/authMiddleware";
+} = require("../controllers/messageController");
+const { authenticate } = require("../middleware/authMiddleware");
+
+// import express from "express";
+// import {
+//   createConversation,
+//   getConversationMessages,
+//   getConversationsById,
+//   sendMessage,
+// } from "../controllers/messageController";
+// import { authenticate } from "../middleware/authMiddleware";
 
 const router = express.Router();
 

@@ -1,4 +1,6 @@
-import User from "../models/User";
+const User = require("../models/User");
+
+// import User from "../models/User";
 
 // Fetch all users
 export const getAllUsers = async (req, res) => {

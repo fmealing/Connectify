@@ -1,5 +1,8 @@
-import mongoose from "mongoose";
-import User from "../models/User";
+const User = require("../models/User");
+const mongoose = require("mongoose");
+
+// import mongoose from "mongoose";
+// import User from "../models/User";
 
 // Follow a User
 export const followUser = async (req, res) => {

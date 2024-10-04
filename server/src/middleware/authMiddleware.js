@@ -1,6 +1,6 @@
-import { Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { AuthenticatedRequest } from "../../@types/types";
+const jwt = require("jsonwebtoken");
+
+// import jwt from "jsonwebtoken";
 
 export const authenticate = (
   req, // Use the extended interface

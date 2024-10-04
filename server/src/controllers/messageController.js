@@ -1,9 +1,12 @@
-import { Request, Response } from "express";
-import mongoose from "mongoose";
-import Conversation from "../models/Conversation";
-import Message from "../models/Message";
-import { pusher } from "../app";
-import { AuthenticatedRequest } from "../../@types/types";
+const mongoose = require("mongoose");
+const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
+const { pusher } = require("../app");
+
+// import mongoose from "mongoose";
+// import Conversation from "../models/Conversation";
+// import Message from "../models/Message";
+// import { pusher } from "../app";
 
 // Create a new conversation
 export const createConversation = async (req, res) => {

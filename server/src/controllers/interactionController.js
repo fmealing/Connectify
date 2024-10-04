@@ -1,7 +1,9 @@
-import { Request, Response } from "express";
-import mongoose from "mongoose";
-import Post from "../models/Post";
-import { AuthenticatedRequest } from "../../@types/types";
+const Post = require("../models/Post");
+
+// import { Request, Response } from "express";
+// import mongoose from "mongoose";
+// import Post from "../models/Post";
+// import { AuthenticatedRequest } from "../../@types/types";
 
 // Like a Post
 export const likePost = async (req, res) => {

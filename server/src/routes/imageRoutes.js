@@ -1,8 +1,14 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   imageUploadMiddleware,
   uploadImage,
-} from "../controllers/imageController";
+} = require("../controllers/imageController");
+
+// import express from "express";
+// import {
+//   imageUploadMiddleware,
+//   uploadImage,
+// } from "../controllers/imageController";
 
 const router = express.Router();
 

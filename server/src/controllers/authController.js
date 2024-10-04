@@ -1,8 +1,7 @@
-import { Storage } from "@google-cloud/storage";
-import User from "../models/User";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const { Storage } = require("@google-cloud/storage");
 
 // load the environment variables
 dotenv.config();

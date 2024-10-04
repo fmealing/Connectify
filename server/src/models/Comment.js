@@ -1,4 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
+// import mongoose, { Schema, Document } from "mongoose";
 
 // Create the Comment schema
 const CommentSchema = new Schema(

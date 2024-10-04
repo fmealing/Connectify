@@ -1,5 +1,8 @@
-import { Storage } from "@google-cloud/storage";
-import dotenv from "dotenv";
+const { Storage } = require("@google-cloud/storage");
+const dotenv = require("dotenv");
+
+// import { Storage } from "@google-cloud/storage";
+// import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();

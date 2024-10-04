@@ -1,5 +1,5 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createPost,
   deletePost,
   editPost,
@@ -7,9 +7,22 @@ import {
   getPostById,
   getPosts,
   getPostsByUser,
-} from "../controllers/postController";
-import { authenticate } from "../middleware/authMiddleware";
-import { imageUploadMiddleware } from "../controllers/imageController";
+} = require("../controllers/postController");
+const { authenticate } = require("../middleware/authMiddleware");
+const { imageUploadMiddleware } = require("../controllers/imageController");
+
+// import express from "express";
+// import {
+//   createPost,
+//   deletePost,
+//   editPost,
+//   getAllPosts,
+//   getPostById,
+//   getPosts,
+//   getPostsByUser,
+// } from "../controllers/postController";
+// import { authenticate } from "../middleware/authMiddleware";
+// import { imageUploadMiddleware } from "../controllers/imageController";
 
 const router = express.Router();
 

@@ -1,9 +1,12 @@
-import { Request, Response } from "express";
-import Post from "../models/Post";
-import mongoose from "mongoose";
-import { Storage } from "@google-cloud/storage";
-import dotenv from "dotenv";
-import { AuthenticatedRequest } from "../../@types/types";
+const Post = require("../models/Post");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const { Storage } = require("@google-cloud/storage");
+
+// import Post from "../models/Post";
+// import mongoose from "mongoose";
+// import { Storage } from "@google-cloud/storage";
+// import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();

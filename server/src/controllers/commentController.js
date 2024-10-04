@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import mongoose from "mongoose";
-import Comment from "../models/Comment";
-import Post from "../models/Post";
-import { AuthenticatedRequest } from "../../@types/types";
+const Post = require("../models/Post");
+const Comment = require("../models/Comment");
+
+// import { Request, Response } from "express";
+// import mongoose from "mongoose";
+// import { AuthenticatedRequest } from "../../@types/types";
 
 // Create a new comment or reply to a comment
 export const createComment = async (req, res) => {

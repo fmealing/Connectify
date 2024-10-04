@@ -1,10 +1,18 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createComment,
   deleteComment,
   getCommentsByPost,
-} from "../controllers/commentController";
-import { authenticate } from "../middleware/authMiddleware";
+} = require("../controllers/commentController");
+const { authenticate } = require("../middleware/authMiddleware");
+
+// import express from "express";
+// import {
+//   createComment,
+//   deleteComment,
+//   getCommentsByPost,
+// } from "../controllers/commentController";
+// import { authenticate } from "../middleware/authMiddleware";
 
 const router = express.Router();
 

@@ -1,4 +1,7 @@
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
+// import mongoose, { Schema } from "mongoose";
 
 // Create the Post schema
 const PostSchema = new Schema(
