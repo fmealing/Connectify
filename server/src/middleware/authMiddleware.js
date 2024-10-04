@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+// Load environment variables from a .env file
+dotenv.config();
 
 // import jwt from "jsonwebtoken";
 
-const authenticate = (
-  req, // Use the extended interface
-  res,
-  next
-) => {
+const authenticate = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {

@@ -69,7 +69,6 @@ app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 
 // The error is here
-console.log("Message Routes: ", messageRoutes);
 app.use("/api/conversations", messageRoutes);
 
 app.use("/api/images", imageRoutes);
