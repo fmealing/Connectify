@@ -25,6 +25,8 @@ interface UserProfile {
 }
 
 const Profile: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [profile, setProfile] = useState<UserProfile | null>(null); // Store user profile
   const [followers, setFollowers] = useState<Follower[]>([]); // Followers state
   const [posts, setPosts] = useState([]); // State to hold posts
@@ -57,7 +59,7 @@ const Profile: React.FC = () => {
       try {
         // Fetch user profile
         const profileResponse = await axios.get(
-          `http://localhost:5001/api/users/${userId}`,
+          `${apiUrl}/api/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -68,7 +70,7 @@ const Profile: React.FC = () => {
 
         // Fetch posts
         const postsResponse = await axios.get(
-          `http://localhost:5001/api/posts/user/${userId}`,
+          `${apiUrl}/api/posts/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -79,7 +81,7 @@ const Profile: React.FC = () => {
 
         // Fetch followers
         const followersResponse = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`,
+          `${apiUrl}/api/users/${userId}/followers`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -108,7 +110,7 @@ const Profile: React.FC = () => {
       if (!profile) return;
 
       const response = await axios.put(
-        `http://localhost:5001/api/users/profile`,
+        `${apiUrl}/api/users/profile`,
         { ...profile, ...updatedFields }, // Merge the current profile with updated fields
         {
           headers: {
@@ -135,7 +137,7 @@ const Profile: React.FC = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5001/api/users/profile`,
+        `${apiUrl}/api/users/profile`,
         formData,
         {
           headers: {

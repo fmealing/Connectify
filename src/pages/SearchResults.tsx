@@ -10,6 +10,8 @@ function useQuery() {
 }
 
 const SearchResultsPage: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const query = useQuery().get("query") || ""; // Get search query from the URL
   const [filter, setFilter] = useState("All");
   const [posts, setPosts] = useState([]);
@@ -20,14 +22,14 @@ const SearchResultsPage: React.FC = () => {
       try {
         if (filter === "All" || filter === "Posts") {
           const postResponse = await axios.get(
-            `http://localhost:5001/api/posts/search/posts?search=${query}`
+            `${apiUrl}/api/posts/search/posts?search=${query}`
           );
           setPosts(postResponse.data);
         }
 
         if (filter === "All" || filter === "Profiles") {
           const profileResponse = await axios.get(
-            `http://localhost:5001/api/users/search/users?search=${query}`
+            `${apiUrl}/api/users/search/users?search=${query}`
           );
           setProfiles(profileResponse.data);
         }

@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify"; // Import Toastify compo
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 const CreatePostCard: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   // State hooks to manage the post content, image URL, modal visibility, and loading status
   const [postContent, setPostContent] = useState("");
   const [imageUrl, setImageUrl] = useState<File | null>(null);
@@ -24,7 +26,7 @@ const CreatePostCard: React.FC = () => {
         formData.append("image", imageUrl); // Append image file to FormData object
 
         const imageUploadResponse = await axios.post(
-          "http://localhost:5001/api/images/upload", // Replace with your image upload endpoint
+          `${apiUrl}/api/images/upload`, // Replace with your image upload endpoint
           formData,
           {
             headers: {
@@ -39,7 +41,7 @@ const CreatePostCard: React.FC = () => {
       // Step 2: Create the post by sending post content and the image URL to the server
       const token = localStorage.getItem("authToken"); // Retrieve the auth token from localStorage
       await axios.post(
-        "http://localhost:5001/api/posts/create", // Replace with your post creation endpoint
+        `${apiUrl}/api/posts/create`, // Replace with your post creation endpoint
         {
           content: postContent, // Post content
           imageUrl: uploadedImageUrl, // Optional: uploaded image URL

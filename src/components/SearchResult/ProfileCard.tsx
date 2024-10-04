@@ -17,6 +17,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   username,
   followersCount,
 }) => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [followers, setFollowers] = useState(followersCount);
   const navigate = useNavigate();
 
@@ -25,7 +27,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     const fetchFollowers = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`
+          `${apiUrl}/api/users/${userId}/followers`
         );
         setFollowers(response.data.followers.length); // Set followers count from API
       } catch (error) {

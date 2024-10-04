@@ -26,6 +26,8 @@ interface Message {
 }
 
 const MessagingPage: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [followers, setFollowers] = useState<User[]>([]);
   const [selectedConversation, setSelectedConversation] =
@@ -48,14 +50,11 @@ const MessagingPage: React.FC = () => {
       }
 
       try {
-        const response = await axios.get(
-          "http://localhost:5001/api/conversations",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/api/conversations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setConversations(response.data);
       } catch (error) {
         console.error("Error fetching conversations:", error);
@@ -66,7 +65,7 @@ const MessagingPage: React.FC = () => {
       if (!userId) return;
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/users/${userId}/followers`
+          `${apiUrl}/api/users/${userId}/followers`
         );
         setFollowers(response.data.followers);
       } catch (error) {
@@ -96,7 +95,7 @@ const MessagingPage: React.FC = () => {
     } else {
       try {
         const response = await axios.post(
-          "http://localhost:5001/api/conversations/create",
+          `${apiUrl}/api/conversations/create`,
           { userIds: [userId, participantId] },
           {
             headers: {
@@ -117,7 +116,7 @@ const MessagingPage: React.FC = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/conversations/${conversationId}/messages`,
+        `${apiUrl}/api/conversations/${conversationId}/messages`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -155,7 +154,7 @@ const MessagingPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:5001/api/conversations/messages",
+        `${apiUrl}/api/conversations/messages`,
         {
           conversationId: selectedConversation._id,
           senderId,

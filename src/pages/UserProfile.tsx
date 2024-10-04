@@ -24,6 +24,8 @@ interface UserProfileProps {
 }
 
 const UserProfilePage: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const { userId } = useParams<{ userId: string }>();
   const [userData, setUserData] = useState<UserProfileProps | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -40,13 +42,11 @@ const UserProfilePage: React.FC = () => {
     const fetchUserProfileAndPosts = async () => {
       try {
         // Fetch the user profile
-        const userResponse = await axios.get(
-          `http://localhost:5001/api/users/${userId}`
-        );
+        const userResponse = await axios.get(`${apiUrl}/api/users/${userId}`);
 
         // Fetch the posts for the user
         const postsResponse = await axios.get(
-          `http://localhost:5001/api/posts/user/${userId}`
+          `${apiUrl}/api/posts/user/${userId}`
         );
 
         // Combine user data and posts
@@ -82,8 +82,8 @@ const UserProfilePage: React.FC = () => {
       }
 
       const url = isFollowing
-        ? "http://localhost:5001/api/follow/unfollow"
-        : "http://localhost:5001/api/follow/follow";
+        ? `${apiUrl}/api/follow/unfollow`
+        : `${apiUrl}/api/follow/follow`;
 
       const data = isFollowing
         ? { unfollowUserId: userId } // When unfollowing, send unfollowUserId

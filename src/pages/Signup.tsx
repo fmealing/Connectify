@@ -11,6 +11,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -39,7 +41,7 @@ const Signup: React.FC = () => {
     }
 
     try {
-      await axios.post("http://localhost:5001/api/users/signup", {
+      await axios.post(`${apiUrl}/api/users/signup`, {
         fullName,
         email,
         username,

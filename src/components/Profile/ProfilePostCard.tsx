@@ -20,6 +20,8 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
   onUpdate,
   onDelete,
 }) => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(textContent);
   const [editedImage, setEditedImage] = useState<File | null>(null);
@@ -35,7 +37,7 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
 
     try {
       const response = await axios.put(
-        `http://localhost:5001/api/posts/${postId}`,
+        `${apiUrl}/api/posts/${postId}`,
         formData,
         {
           headers: {
@@ -60,14 +62,11 @@ const ProfilePostCard: React.FC<PostCardProps> = ({
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.delete(
-        `http://localhost/api/posts/${postId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.delete(`${apiUrl}/api/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 200) {
         onDelete(postId);

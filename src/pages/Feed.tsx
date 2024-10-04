@@ -30,6 +30,8 @@ interface DecodedToken {
 }
 
 const Feed = () => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [userId, setUserId] = useState<string | null>(null); // Store the decoded user ID
 
@@ -49,7 +51,7 @@ const Feed = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/posts");
+        const response = await axios.get(`${apiUrl}/api/posts`);
         setPosts(response.data);
       } catch (error) {
         console.error(error);

@@ -31,6 +31,8 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
   initiallyLiked = false,
   initialComments = [],
 }) => {
+  const apiUrl = "https://connectify-11mf.onrender.com";
+
   // Constants and state hooks for managing likes, comments, and other interactions
   const maxLength = 100;
   const isTextTruncated = content.length > maxLength;
@@ -52,7 +54,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
       if (liked) {
         // Send API request to unlike the post
         await axios.post(
-          "http://localhost:5001/api/interactions/posts/unlike",
+          `${apiUrl}/api/interactions/posts/unlike`,
           { postId },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
@@ -60,7 +62,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
       } else {
         // Send API request to like the post
         await axios.post(
-          "http://localhost:5001/api/interactions/posts/like",
+          `${apiUrl}/api/interactions/posts/like`,
           { postId },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
@@ -82,7 +84,7 @@ const FeedPostCard: React.FC<FeedPostCardProps> = ({
 
       // Send API request to submit a new comment
       const response = await axios.post(
-        "http://localhost:5001/api/comments/create",
+        `${apiUrl}/api/comments/create`,
         { postId, content: newComment },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
