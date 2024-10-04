@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
 
-// import mongoose, { Schema } from "mongoose";
-// import bcrypt from "bcrypt";
-
 // Create the User schema
 const UserSchema = new Schema(
   {
@@ -24,7 +21,7 @@ const UserSchema = new Schema(
     },
     passwordHash: {
       type: String,
-      required: function (this) {
+      required: function () {
         return !this.googleId; // Only require passwordHash for non-OAuth users
       },
     },
@@ -73,25 +70,20 @@ const UserSchema = new Schema(
 );
 
 // Hash the password before saving the user, only if it's a regular user with a password
-UserSchema.pre(
-  "save",
-  async function (next) {
-    if (!this.isModified("passwordHash") || !this.passwordHash) return next();
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("passwordHash") || !this.passwordHash) return next();
 
-    try {
-      const salt = await bcrypt.genSalt(10);
-      this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
-      next();
-    } catch (error) {
-      next(error);
-    }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+    next();
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 // Method to compare passwords
-UserSchema.methods.comparePassword = async function (
-  candidatePassword
-  ){
+UserSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.passwordHash) return false; // No password for OAuth users
   return bcrypt.compare(candidatePassword, this.passwordHash);
 };
@@ -99,4 +91,3 @@ UserSchema.methods.comparePassword = async function (
 const User = mongoose.model("User", UserSchema);
 
 module.exports = User;
-
