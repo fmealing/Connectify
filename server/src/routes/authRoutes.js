@@ -6,7 +6,6 @@ const {
   updateUserProfile,
   googleLogin,
 } = require("../controllers/authController");
-const authenticate = require("../middleware/authMiddleware");
 const {
   deleteUser,
   getAllUsers,
@@ -16,6 +15,7 @@ const {
   getUsers,
 } = require("../controllers/userController");
 const { imageUploadMiddleware } = require("../controllers/imageController");
+const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
