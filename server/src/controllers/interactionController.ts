@@ -1,12 +1,20 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import Post from "../models/Post";
-import Comment from "../models/Comment";
+import { AuthenticatedRequest } from "../../@types/types";
 
 // Like a Post
-export const likePost = async (req: Request, res: Response) => {
+export const likePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = req.user?._id; // Get the authenticated user's ID
     const { postId } = req.body;
+
+    // Check if userId is available
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
 
     const post = await Post.findById(postId);
 
@@ -34,10 +42,17 @@ export const likePost = async (req: Request, res: Response) => {
 };
 
 // Unlike a Post
-export const unlikePost = async (req: Request, res: Response) => {
+export const unlikePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = req.user?._id; // Get the authenticated user's ID
     const { postId } = req.body;
+
+    // Check if userId is available
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
 
     const post = await Post.findById(postId);
 
@@ -47,7 +62,7 @@ export const unlikePost = async (req: Request, res: Response) => {
     }
 
     // Remove the user's ID from the likes array
-    post.likes = post.likes.filter((like) => like.toString() !== userId);
+    post.likes = post.likes.filter((like) => !like.equals(userId));
     await post.save();
 
     return res.status(200).json({ message: "Post unliked successfully", post });

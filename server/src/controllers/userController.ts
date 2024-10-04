@@ -1,5 +1,6 @@
 import User from "../models/User";
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../../@types/types";
 
 // Fetch all users
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -40,11 +41,11 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 // Delete a user by ID
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const authenticatedUserId = (req as any).user.id; // Get the authenticated user ID
+    const authenticatedUserId = req.user?.id; // Get the authenticated user ID
 
     // Only allow the user to delete their own account
     if (authenticatedUserId !== userId) {

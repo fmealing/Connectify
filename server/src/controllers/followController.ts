@@ -1,13 +1,22 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import User from "../models/User";
+import { AuthenticatedRequest } from "../../@types/types";
 
 // Follow a User
-export const followUser = async (req: Request, res: Response) => {
+export const followUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).user.id; // Current logged-in user
+    const userId = req.user?._id; // Current logged-in user
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
+
     const { followUserId } = req.body; // User to follow
 
-    if (userId == followUserId) {
+    if (userId.equals(new mongoose.Types.ObjectId(followUserId))) {
       return res.status(400).json({ message: "You cannot follow yourself" });
     }
 
@@ -44,12 +53,22 @@ export const followUser = async (req: Request, res: Response) => {
 };
 
 // Unfollow a User
-export const unfollowUser = async (req: Request, res: Response) => {
+export const unfollowUser = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
-    const userId = (req as any).user.id; // Current logged-in user
+    const userId = req.user?._id; // Current logged-in user
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
+
     const { unfollowUserId } = req.body; // User to unfollow
 
-    if (userId == unfollowUserId) {
+    if (userId.equals(new mongoose.Types.ObjectId(unfollowUserId))) {
       return res.status(400).json({ message: "You cannot unfollow yourself" });
     }
 
@@ -76,7 +95,7 @@ export const unfollowUser = async (req: Request, res: Response) => {
 
     // Remove userId from unfollowUser's followers array
     unfollowUser.followers = unfollowUser.followers.filter(
-      (id) => id.toString() !== userId
+      (id) => id.toString() !== userId.toString()
     );
     await unfollowUser.save();
 

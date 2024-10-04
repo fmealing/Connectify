@@ -2,10 +2,9 @@ import { Request, Response } from "express";
 import { Storage } from "@google-cloud/storage";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import axios from "axios";
 import dotenv from "dotenv";
+import { AuthenticatedRequest } from "../../@types/types";
 
 // load the environment variables
 dotenv.config();
@@ -85,9 +84,12 @@ export const login = async (req: Request, res: Response) => {
 };
 
 // Get User Profile
-export const getUserProfile = async (req: Request, res: Response) => {
+export const getUserProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
-    const userId = (req as any).user.id; // Extract the user id from the request
+    const userId = req.user?.id; // Extract the user id from the request
 
     // Fetch user details from the database
     const user = await User.findById(userId).select("-passwordHash"); // Exclude the password hash from the response
@@ -105,9 +107,12 @@ export const getUserProfile = async (req: Request, res: Response) => {
 };
 
 // Update User Profile
-export const updateUserProfile = async (req: Request, res: Response) => {
+export const updateUserProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
-    const userId = (req as any).user?.id; // Get the authenticated user's ID
+    const userId = req.user?.id; // Again, no need to cast
 
     if (!userId) {
       return res
@@ -117,7 +122,6 @@ export const updateUserProfile = async (req: Request, res: Response) => {
 
     let imageUrl = req.body.profilePicture;
 
-    // Check if a file is present in the request
     if (req.file) {
       const file = req.file;
       const blob = bucket.file(`${Date.now()}_${file.originalname}`);
@@ -132,10 +136,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       });
 
       blobStream.on("finish", async () => {
-        // Construct the public URL of the uploaded image
         imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-        // Update the user's profile picture after the file is uploaded
         const updatedUser = await User.findByIdAndUpdate(
           userId,
           { profilePicture: imageUrl, ...req.body },
@@ -149,9 +150,8 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         return res.status(200).json(updatedUser);
       });
 
-      blobStream.end(file.buffer); // Upload the file
+      blobStream.end(file.buffer);
     } else {
-      // Handle profile updates without file upload
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         { ...req.body },
@@ -162,68 +162,33 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         return res.status(404).json({ message: "User not found" });
       }
 
-      return res.status(200).json(updatedUser); // Respond with the updated user
+      return res.status(200).json(updatedUser);
     }
   } catch (error) {
-    const err = error as Error;
-    res
-      .status(500)
-      .json({ message: "Error updating profile", error: err.message });
-  }
-};
-
-// Reset Password
-export const resetPassword = async (req: Request, res: Response) => {
-  try {
-    const { token, newPassword } = req.body;
-
-    // Find the user by the reset token and check if the token is still valid
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
+    res.status(500).json({
+      message: "Error updating profile",
+      error: (error as Error).message,
     });
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
-    }
-
-    // Hash the new password and save it
-    const salt = await bcrypt.genSalt(10);
-    (user as any).password = await bcrypt.hash(newPassword, salt);
-    (user as any).resetPasswordToken = undefined;
-    (user as any).resetPasswordExpires = undefined;
-    await user.save();
-
-    res.status(200).json({ message: "Password reset successful" });
-  } catch (error) {
-    const err = error as Error;
-    res
-      .status(500)
-      .json({ message: "Error resetting password", error: err.message });
   }
 };
 
 // Google Login
 export const googleLogin = async (req: Request, res: Response) => {
-  const { email, name, picture, sub: googleId } = req.body; // Google payload
+  const { email, name, picture, sub: googleId } = req.body;
 
   try {
-    // Find user by Google Id or email
     let user = await User.findOne({ $or: [{ email }, { googleId }] });
 
     if (!user) {
-      // If user doesn't exist, create a new user
       user = new User({
         fullName: name,
         email,
         googleId,
         profilePicture: picture,
       });
-
       await user.save();
     }
 
-    // Generate a JWT token (Replace with your actual JWT generation method)
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET as string,
@@ -232,7 +197,8 @@ export const googleLogin = async (req: Request, res: Response) => {
 
     res.status(200).json({ token });
   } catch (error) {
-    console.error("Error during Google login:", error);
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(500)
+      .json({ message: "Server error", error: (error as Error).message });
   }
 };

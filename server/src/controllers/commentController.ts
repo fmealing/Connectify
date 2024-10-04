@@ -2,20 +2,22 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Comment from "../models/Comment";
 import Post from "../models/Post";
-
-// Extend the Request interface to include user
-interface AuthenticateRequest extends Request {
-  user?: { _id: string };
-}
+import { AuthenticatedRequest } from "../../@types/types";
 
 // Create a new comment or reply to a comment
 export const createComment = async (
-  req: AuthenticateRequest,
+  req: AuthenticatedRequest,
   res: Response
 ) => {
   try {
     const { postId, content, parentCommentId } = req.body;
-    const userId = (req as any).user.id;
+    const userId = req.user?._id; // Extract the user id from the request
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
 
     // Check if the post exists
     const post = await Post.findById(postId);
@@ -83,12 +85,18 @@ export const getCommentsByPost = async (req: Request, res: Response) => {
 
 // delete a specific comment
 export const deleteComment = async (
-  req: AuthenticateRequest,
+  req: AuthenticatedRequest,
   res: Response
 ) => {
   try {
     const { commentId, postId } = req.params;
-    const userId = (req as any).user.id; // assuming that the user is authenticated
+    const userId = req.user?._id; // Extract the user id from the request
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
+    }
 
     // find the comment by ID
     const comment = await Comment.findById(commentId);
@@ -99,7 +107,7 @@ export const deleteComment = async (
     }
 
     // Check if the authenticated user is the owner of the comment
-    if (comment.user.toString() !== userId) {
+    if (comment.user.toString() !== userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized: Cannot delete this comment" });

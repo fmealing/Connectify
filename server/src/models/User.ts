@@ -18,7 +18,7 @@ export interface IUser extends Document {
 }
 
 // Create the User schema
-const UserSchema: Schema = new Schema(
+const UserSchema: Schema<IUser> = new Schema(
   {
     fullName: {
       type: String,
@@ -36,9 +36,8 @@ const UserSchema: Schema = new Schema(
     },
     passwordHash: {
       type: String,
-      // Only require passwordHash for non-OAuth users
       required: function (this: IUser) {
-        return !this.googleId;
+        return !this.googleId; // Only require passwordHash for non-OAuth users
       },
     },
     profilePicture: {
@@ -86,24 +85,28 @@ const UserSchema: Schema = new Schema(
 );
 
 // Hash the password before saving the user, only if it's a regular user with a password
-UserSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("passwordHash") || !this.passwordHash) return next();
+UserSchema.pre<IUser>(
+  "save",
+  async function (next: mongoose.CallbackWithoutResultAndOptionalError) {
+    if (!this.isModified("passwordHash") || !this.passwordHash) return next();
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
-    next();
-  } catch (err: any) {
-    next(err);
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+      next();
+    } catch (error) {
+      const err = error as Error;
+      next(err);
+    }
   }
-});
+);
 
 // Method to compare passwords
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   if (!this.passwordHash) return false; // No password for OAuth users
-  return await bcrypt.compare(candidatePassword, this.passwordHash);
+  return bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
 const User = mongoose.model<IUser>("User", UserSchema);

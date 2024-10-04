@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { AuthenticatedRequest } from "../../@types/types";
 
-// JWT Authentication Middleware
 export const authenticate = (
-  req: Request,
+  req: AuthenticatedRequest, // Use the extended interface
   res: Response,
   next: NextFunction
 ) => {
@@ -16,14 +16,12 @@ export const authenticate = (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-
-    (req as any).user = decoded; // Attach the decoded token (with user info) to the request object
-
-    // Ensure the 'user' object contains the 'id'
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+    };
+    req.user = decoded; // Attach the decoded user to the request
     next();
   } catch (error) {
-    console.error("Token verification failed:", error);
     res.status(400).json({ message: "Invalid token" });
   }
 };

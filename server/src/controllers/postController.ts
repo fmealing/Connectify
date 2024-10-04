@@ -3,6 +3,7 @@ import Post from "../models/Post";
 import mongoose from "mongoose";
 import { Storage } from "@google-cloud/storage";
 import dotenv from "dotenv";
+import { AuthenticatedRequest } from "../../@types/types";
 
 // Load environment variables
 dotenv.config();
@@ -14,15 +15,11 @@ const storage = new Storage({
 });
 const bucket = storage.bucket("connectify-images");
 
-interface AuthenticateRequest extends Request {
-  user?: { id: string };
-}
-
 // Create a new post
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { content, imageUrl, videoUrl } = req.body;
-    const userId = (req as any).user.id; // Assume the user is authenticated
+    const userId = req.user?.id; // Assume the user is authenticated
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized: No user found" });
@@ -96,10 +93,10 @@ export const getPostById = async (req: Request, res: Response) => {
 };
 
 // Edit post by id
-export const editPost = async (req: Request, res: Response) => {
+export const editPost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { postId } = req.params;
-    const userId = (req as any).user.id;
+    const userId = req.user?.id;
     const { content } = req.body;
 
     // Find the post by ID
@@ -163,10 +160,10 @@ export const editPost = async (req: Request, res: Response) => {
 };
 
 // Delete post by ID
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { postId } = req.params;
-    const userId = (req as any).user.id; // Assuming the user is authenticated
+    const userId = req.user?.id; // Assuming the user is authenticated
 
     // Find the post by ID
     const post = await Post.findById(postId);

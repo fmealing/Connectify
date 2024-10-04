@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import Conversation from "../models/Conversation";
 import Message from "../models/Message";
 import { pusher } from "../app";
+import { AuthenticatedRequest } from "../../@types/types";
 
-export const createConversation = async (req: Request, res: Response) => {
+// Create a new conversation
+export const createConversation = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const { userIds } = req.body;
 
   try {
@@ -25,13 +31,14 @@ export const createConversation = async (req: Request, res: Response) => {
   }
 };
 
-export const sendMessage = async (req: Request, res: Response) => {
+// Send a message in a conversation
+export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
   const { conversationId, senderId, content } = req.body;
 
   try {
     const message = new Message({
-      conversation: conversationId,
-      sender: senderId,
+      conversation: new mongoose.Types.ObjectId(conversationId),
+      sender: new mongoose.Types.ObjectId(senderId),
       content,
     });
     await message.save();
@@ -47,10 +54,13 @@ export const sendMessage = async (req: Request, res: Response) => {
   }
 };
 
+// Get messages for a conversation
 export const getConversationMessages = async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
-    const messages = await Message.find({ conversation: conversationId }).sort({
+    const messages = await Message.find({
+      conversation: new mongoose.Types.ObjectId(conversationId),
+    }).sort({
       createdAt: 1,
     }); // Fetch and sort messages by time
     res.status(200).json(messages);
@@ -60,10 +70,11 @@ export const getConversationMessages = async (req: Request, res: Response) => {
 };
 
 // Get all conversations of an authenticated user
-export const getConversationsById = async (req: Request, res: Response) => {
-  const user = (req as any).user; // Access the decoded token from the request
-
-  const userId = user?.id || user?._id;
+export const getConversationsById = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const userId = req.user?._id;
 
   if (!userId) {
     return res
