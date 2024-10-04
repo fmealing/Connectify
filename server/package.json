@@ -5,10 +5,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "build": "echo \"No build step needed\""
   },
   "keywords": [],
-  "author": "Florian Mealing",
+  "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
