@@ -2,12 +2,6 @@ const dotenv = require("dotenv");
 const { Storage } = require("@google-cloud/storage");
 const multer = require("multer");
 
-// import { Request, Response } from "express";
-// import multer from "multer";
-// import path from "path";
-// import { Storage } from "@google-cloud/storage";
-// import dotenv from "dotenv";
-
 // Load environment variables
 dotenv.config();
 
@@ -21,7 +15,7 @@ const bucket = storage.bucket("connectify-images");
 // Set up Multer to handle file uploads temporarily in memory
 const upload = multer({ storage: multer.memoryStorage() });
 
-export const uploadImage = async (req, res) => {
+const uploadImage = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -58,5 +52,8 @@ export const uploadImage = async (req, res) => {
   }
 };
 
-// Export the multer middleware for use in the routes
-export const imageUploadMiddleware = upload.single("image"); // "image" is the field name in the form
+// Export the multer middleware and uploadImage function for use in the routes
+module.exports = {
+  uploadImage,
+  imageUploadMiddleware: upload.single("image"), // "image" is the field name in the form
+};

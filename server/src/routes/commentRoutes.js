@@ -25,4 +25,4 @@ router.get("/:postId", getCommentsByPost);
 // Delete all comments for a specific post (protected route)
 router.delete("/:commentId/:postId", authenticate, deleteComment);
 
-export default router;
+module.exports = router;

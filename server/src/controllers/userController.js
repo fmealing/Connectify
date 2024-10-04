@@ -3,7 +3,7 @@ const User = require("../models/User");
 // import User from "../models/User";
 
 // Fetch all users
-export const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database excluding the passwordHash field
     const users = await User.find({}, "-passwordHash");
@@ -17,7 +17,7 @@ export const getAllUsers = async (req, res) => {
 };
 
 // Fetch a specific user's profile by ID
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -39,7 +39,7 @@ export const getUserById = async (req, res) => {
 };
 
 // Delete a user by ID
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -73,7 +73,7 @@ export const deleteUser = async (req, res) => {
 };
 
 // Fetch all followers of a specific user
-export const getFollowers = async (req, res) => {
+const getFollowers = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -98,7 +98,7 @@ export const getFollowers = async (req, res) => {
 };
 
 // Fetch all users that a specific user is following
-export const getFollowing = async (req, res) => {
+const getFollowing = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -123,7 +123,7 @@ export const getFollowing = async (req, res) => {
 };
 
 // Search all users
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
     const { search } = req.query;
 
@@ -146,4 +146,13 @@ export const getUsers = async (req, res) => {
       .status(500)
       .json({ message: "Error fetching users", error: error.message });
   }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  deleteUser,
+  getFollowers,
+  getFollowing,
+  getUsers,
 };

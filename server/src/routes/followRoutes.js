@@ -14,4 +14,4 @@ router.post("/follow", authenticate, followUser);
 // Unfollow a user
 router.post("/unfollow", authenticate, unfollowUser);
 
-export default router; // exports the router object
+module.exports = router; // exports the router object

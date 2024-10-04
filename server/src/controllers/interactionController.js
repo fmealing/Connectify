@@ -6,7 +6,7 @@ const Post = require("../models/Post");
 // import { AuthenticatedRequest } from "../../@types/types";
 
 // Like a Post
-export const likePost = async (req, res) => {
+const likePost = async (req, res) => {
   try {
     const userId = req.user?._id; // Get the authenticated user's ID
     const { postId } = req.body;
@@ -43,7 +43,7 @@ export const likePost = async (req, res) => {
 };
 
 // Unlike a Post
-export const unlikePost = async (req, res) => {
+const unlikePost = async (req, res) => {
   try {
     const userId = req.user?._id; // Get the authenticated user's ID
     const { postId } = req.body;
@@ -72,4 +72,9 @@ export const unlikePost = async (req, res) => {
       .status(500)
       .json({ message: "Error unliking post", error: error.message });
   }
+};
+
+module.exports = {
+  likePost,
+  unlikePost,
 };

@@ -6,7 +6,7 @@ const Comment = require("../models/Comment");
 // import { AuthenticatedRequest } from "../../@types/types";
 
 // Create a new comment or reply to a comment
-export const createComment = async (req, res) => {
+const createComment = async (req, res) => {
   try {
     const { postId, content, parentCommentId } = req.body;
     const userId = req.user?._id; // Extract the user id from the request
@@ -52,7 +52,7 @@ export const createComment = async (req, res) => {
 };
 
 // get all comments for a specific post
-export const getCommentsByPost = async (req, res) => {
+const getCommentsByPost = async (req, res) => {
   try {
     const { postId } = req.params; // get the post id from the request params
 
@@ -80,7 +80,7 @@ export const getCommentsByPost = async (req, res) => {
 };
 
 // delete a specific comment
-export const deleteComment = async (req, res) => {
+const deleteComment = async (req, res) => {
   try {
     const { commentId, postId } = req.params;
     const userId = req.user?._id; // Extract the user id from the request
@@ -119,4 +119,10 @@ export const deleteComment = async (req, res) => {
       .status(500)
       .json({ message: "Error deleting comment", error: error.message });
   }
+};
+
+module.exports = {
+  createComment,
+  getCommentsByPost,
+  deleteComment,
 };

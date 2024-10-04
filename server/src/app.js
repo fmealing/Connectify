@@ -18,9 +18,6 @@ const imageRoutes = require("./routes/imageRoutes");
 // Load environment variables from a .env file
 dotenv.config();
 
-// create express app
-const app = express();
-
 // Ensure required environment variables are set
 const requiredEnvVars = [
   "MONGO_URI",
@@ -36,6 +33,9 @@ requiredEnvVars.forEach((envVar) => {
   }
 });
 
+// Create express app
+const app = express();
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: "10kb" })); // Limit payload size
@@ -44,18 +44,22 @@ app.use(compression()); // GZIP compression
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Failed to connect to MongoDB", err));
 
 // Pusher
-export const pusher = new Pusher({
+const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
   secret: process.env.PUSHER_SECRET,
   cluster: process.env.PUSHER_CLUSTER,
   useTLS: true,
 });
+module.exports.pusher = pusher;
 
 // Define routes
 app.use("/api/users", authRoutes);

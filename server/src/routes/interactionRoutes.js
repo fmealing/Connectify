@@ -15,4 +15,4 @@ const router = express.Router();
 router.post("/posts/like", authenticate, likePost);
 router.post("/posts/unlike", authenticate, unlikePost);
 
-export default router;
+module.exports = router;

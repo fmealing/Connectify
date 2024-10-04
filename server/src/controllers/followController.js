@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 // import User from "../models/User";
 
 // Follow a User
-export const followUser = async (req, res) => {
+const followUser = async (req, res) => {
   try {
     const userId = req.user?._id; // Current logged-in user's ObjectId
 
@@ -54,7 +54,7 @@ export const followUser = async (req, res) => {
 };
 
 // Unfollow a User
-export const unfollowUser = async (req, res) => {
+const unfollowUser = async (req, res) => {
   try {
     const userId = req.user?._id; // Current logged-in user's ObjectId
 
@@ -104,4 +104,9 @@ export const unfollowUser = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+module.exports = {
+  followUser,
+  unfollowUser,
 };

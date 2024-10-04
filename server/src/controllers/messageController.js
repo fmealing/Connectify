@@ -9,7 +9,7 @@ const { pusher } = require("../app");
 // import { pusher } from "../app";
 
 // Create a new conversation
-export const createConversation = async (req, res) => {
+const createConversation = async (req, res) => {
   const { userIds } = req.body;
 
   try {
@@ -32,7 +32,7 @@ export const createConversation = async (req, res) => {
 };
 
 // Send a message in a conversation
-export const sendMessage = async (req, res) => {
+const sendMessage = async (req, res) => {
   const { conversationId, senderId, content } = req.body;
 
   try {
@@ -55,7 +55,7 @@ export const sendMessage = async (req, res) => {
 };
 
 // Get messages for a conversation
-export const getConversationMessages = async (req, res) => {
+const getConversationMessages = async (req, res) => {
   try {
     const { conversationId } = req.params;
     const messages = await Message.find({
@@ -70,7 +70,7 @@ export const getConversationMessages = async (req, res) => {
 };
 
 // Get all conversations of an authenticated user
-export const getConversationsById = async (req, res) => {
+const getConversationsById = async (req, res) => {
   const userId = req.user?._id;
 
   if (!userId) {
@@ -89,4 +89,11 @@ export const getConversationsById = async (req, res) => {
     console.error("Error fetching conversations:", error);
     res.status(500).json({ message: "Error fetching conversations", error });
   }
+};
+
+module.exports = {
+  createConversation,
+  sendMessage,
+  getConversationMessages,
+  getConversationsById,
 };

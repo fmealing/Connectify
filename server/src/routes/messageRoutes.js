@@ -30,4 +30,4 @@ router.get("/:conversationId/messages", getConversationMessages);
 // Get conversations of an authenticated user
 router.get("/", authenticate, getConversationsById);
 
-export default router;
+module.exports = router;

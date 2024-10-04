@@ -19,7 +19,7 @@ const storage = new Storage({
 const bucket = storage.bucket("connectify-images");
 
 // Create a new post
-export const createPost = async (req, res) => {
+const createPost = async (req, res) => {
   try {
     const { content, imageUrl, videoUrl } = req.body;
     const userId = req.user?.id; // Assume the user is authenticated
@@ -46,7 +46,7 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const getAllPosts = async (req, res) => {
+const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "fullName profilePicture")
@@ -65,7 +65,7 @@ export const getAllPosts = async (req, res) => {
 };
 
 // Get post by id
-export const getPostById = async (req, res) => {
+const getPostById = async (req, res) => {
   try {
     const { postId } = req.params;
 
@@ -93,7 +93,7 @@ export const getPostById = async (req, res) => {
 };
 
 // Edit post by id
-export const editPost = async (req, res) => {
+const editPost = async (req, res) => {
   try {
     const { postId } = req.params;
     const userId = req.user?.id;
@@ -160,7 +160,7 @@ export const editPost = async (req, res) => {
 };
 
 // Delete post by ID
-export const deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
     const userId = req.user?.id; // Assuming the user is authenticated
@@ -191,9 +191,10 @@ export const deletePost = async (req, res) => {
       .json({ message: "Error deleting post", error: error.message });
   }
 };
+ß;
 
 // Get all posts by user
-export const getPostsByUser = async (req, res) => {
+const getPostsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -218,7 +219,7 @@ export const getPostsByUser = async (req, res) => {
 };
 
 // Search all posts
-export const getPosts = async (req, res) => {
+const getPosts = async (req, res) => {
   try {
     const { search } = req.query;
 
@@ -248,4 +249,14 @@ export const getPosts = async (req, res) => {
       .status(500)
       .json({ message: "Error fetching posts", error: error.message });
   }
+};
+
+module.exports = {
+  createPost,
+  getAllPosts,
+  getPostById,
+  editPost,
+  deletePost,
+  getPostsByUser,
+  getPosts,
 };

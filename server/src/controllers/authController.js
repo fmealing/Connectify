@@ -13,7 +13,7 @@ const storage = new Storage({
 const bucket = storage.bucket("connectify-images");
 
 // User Registration (Sign Up)
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { fullName, email, username, password } = req.body;
 
@@ -48,7 +48,7 @@ export const signup = async (req, res) => {
 };
 
 // User Login
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
 };
 
 // Get User Profile
-export const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
   try {
     const userId = req.user.id; // Extract the user id from the request
 
@@ -98,7 +98,7 @@ export const getUserProfile = async (req, res) => {
 };
 
 // Update User Profile
-export const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id; // Extract the user id
 
@@ -161,7 +161,7 @@ export const updateUserProfile = async (req, res) => {
 };
 
 // Google Login
-export const googleLogin = async (req, res) => {
+const googleLogin = async (req, res) => {
   const { email, name, picture, sub: googleId } = req.body;
 
   try {
@@ -187,4 +187,12 @@ export const googleLogin = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
+};
+
+module.exports = {
+  signup,
+  login,
+  getUserProfile,
+  updateUserProfile,
+  googleLogin,
 };

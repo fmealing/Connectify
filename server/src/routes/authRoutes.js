@@ -71,4 +71,4 @@ router.get("/:userId/following", getFollowing);
 // Login with Google
 router.post("/google", googleLogin);
 
-export default router;
+module.exports = router;

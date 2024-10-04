@@ -47,4 +47,4 @@ router.delete("/:postId", authenticate, deletePost);
 // Get all posts by a specific user
 router.get("/user/:userId", getPostsByUser);
 
-export default router;
+module.exports = router;

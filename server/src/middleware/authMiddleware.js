@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 // import jwt from "jsonwebtoken";
 
-export const authenticate = (
+const authenticate = (
   req, // Use the extended interface
   res,
   next
@@ -23,3 +23,5 @@ export const authenticate = (
     res.status(400).json({ message: "Invalid token" });
   }
 };
+
+module.exports = authenticate;
