@@ -1,26 +1,25 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+import { Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { AuthenticatedRequest } from "../../@types/types";
+
+export const authenticate = (
+  req, // Use the extended interface
+  res,
+  next
+) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Attach the decoded user to the request
+    next();
+  } catch (error) {
+    res.status(400).json({ message: "Invalid token" });
+  }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticate = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authenticate = (req, // Use the extended interface
-res, next) => {
-    var _a;
-    const token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", "");
-    if (!token) {
-        return res
-            .status(401)
-            .json({ message: "Access denied. No token provided" });
-    }
-    try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Attach the decoded user to the request
-        next();
-    }
-    catch (error) {
-        res.status(400).json({ message: "Invalid token" });
-    }
-};
-exports.authenticate = authenticate;

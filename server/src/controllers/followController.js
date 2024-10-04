@@ -1,101 +1,104 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.unfollowUser = exports.followUser = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const User_1 = __importDefault(require("../models/User"));
+import mongoose from "mongoose";
+import User from "../models/User";
+
 // Follow a User
-const followUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id; // Current logged-in user
-        if (!userId) {
-            return res
-                .status(401)
-                .json({ message: "Unauthorized: User not authenticated" });
-        }
-        const { followUserId } = req.body; // User to follow
-        if (userId.equals(new mongoose_1.default.Types.ObjectId(followUserId))) {
-            return res.status(400).json({ message: "You cannot follow yourself" });
-        }
-        // Find both users
-        const user = yield User_1.default.findById(userId);
-        const followUser = yield User_1.default.findById(followUserId);
-        if (!user || !followUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        // Check if the user is already following the followUser
-        if (user.following.includes(followUserId)) {
-            return res
-                .status(400)
-                .json({ message: "You are already following this user" });
-        }
-        // Add followUserId to user's following array
-        user.following.push(followUserId);
-        yield user.save();
-        // Add userId to followUser's followers array
-        followUser.followers.push(userId);
-        yield followUser.save();
-        return res.status(200).json({ message: "User followed successfully" });
+export const followUser = async (req, res) => {
+  try {
+    const userId = req.user?._id; // Current logged-in user's ObjectId
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
     }
-    catch (error) {
-        const err = error;
-        return res
-            .status(500)
-            .json({ message: "Error following user", error: err.message });
+
+    const { followUserId } = req.body; // User to follow
+
+    if (userId.equals(followUserId)) {
+      return res.status(400).json({ message: "You cannot follow yourself" });
     }
-});
-exports.followUser = followUser;
+
+    // Find both users
+    const user = await User.findById(userId);
+    const followUser = await User.findById(followUserId);
+
+    if (!user || !followUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the user is already following the followUser
+    if (user.following.includes(followUserId)) {
+      return res
+        .status(400)
+        .json({ message: "You are already following this user" });
+    }
+
+    // Add followUserId to user's following array
+    user.following.push(new mongoose.Types.ObjectId(followUserId));
+    await user.save();
+
+    // Add userId to followUser's followers array
+    followUser.followers.push(userId);
+    await followUser.save();
+
+    return res.status(200).json({ message: "User followed successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error following user",
+      error: error.message,
+    });
+  }
+};
+
 // Unfollow a User
-const unfollowUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id; // Current logged-in user
-        if (!userId) {
-            return res
-                .status(401)
-                .json({ message: "Unauthorized: User not authenticated" });
-        }
-        const { unfollowUserId } = req.body; // User to unfollow
-        if (userId.equals(new mongoose_1.default.Types.ObjectId(unfollowUserId))) {
-            return res.status(400).json({ message: "You cannot unfollow yourself" });
-        }
-        // Find both users
-        const user = yield User_1.default.findById(userId);
-        const unfollowUser = yield User_1.default.findById(unfollowUserId);
-        if (!user || !unfollowUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        // Check if the user is already following the unfollowUser
-        if (!user.following.includes(unfollowUserId)) {
-            return res
-                .status(400)
-                .json({ message: "You are not following this user" });
-        }
-        // Remove unfollowUserId from user's following array
-        user.following = user.following.filter((id) => id.toString() !== unfollowUserId);
-        yield user.save();
-        // Remove userId from unfollowUser's followers array
-        unfollowUser.followers = unfollowUser.followers.filter((id) => id.toString() !== userId.toString());
-        yield unfollowUser.save();
-        return res.status(200).json({ message: "User unfollowed successfully" });
+export const unfollowUser = async (req, res) => {
+  try {
+    const userId = req.user?._id; // Current logged-in user's ObjectId
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: User not authenticated" });
     }
-    catch (error) {
-        const err = error;
-        return res
-            .status(500)
-            .json({ message: "Error unfollowing user", error: err.message });
+
+    const { unfollowUserId } = req.body; // User to unfollow
+
+    if (userId.equals(new mongoose.Types.ObjectId(unfollowUserId))) {
+      return res.status(400).json({ message: "You cannot unfollow yourself" });
     }
-});
-exports.unfollowUser = unfollowUser;
+
+    // Find both users
+    const user = await User.findById(userId);
+    const unfollowUser = await User.findById(unfollowUserId);
+
+    if (!user || !unfollowUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the user is already following the unfollowUser
+    if (!user.following.includes(new mongoose.Types.ObjectId(unfollowUserId))) {
+      return res
+        .status(400)
+        .json({ message: "You are not following this user" });
+    }
+
+    // Remove unfollowUserId from user's following array
+    user.following = user.following.filter(
+      (id) => id.toString() !== unfollowUserId
+    );
+    await user.save();
+
+    // Remove userId from unfollowUser's followers array
+    unfollowUser.followers = unfollowUser.followers.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+    await unfollowUser.save();
+
+    return res.status(200).json({ message: "User unfollowed successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error unfollowing user",
+      error: error.message,
+    });
+  }
+};
