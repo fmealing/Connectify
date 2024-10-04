@@ -4,7 +4,7 @@ const {
   deleteComment,
   getCommentsByPost,
 } = require("../controllers/commentController");
-const { authenticate } = require("../middleware/authMiddleware");
+const authenticate = require("../middleware/authMiddleware");
 
 // import express from "express";
 // import {

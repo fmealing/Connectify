@@ -191,7 +191,6 @@ const deletePost = async (req, res) => {
       .json({ message: "Error deleting post", error: error.message });
   }
 };
-ß;
 
 // Get all posts by user
 const getPostsByUser = async (req, res) => {

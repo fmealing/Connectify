@@ -3,7 +3,7 @@ const {
   likePost,
   unlikePost,
 } = require("../controllers/interactionController");
-const { authenticate } = require("../middleware/authMiddleware");
+const authenticate = require("../middleware/authMiddleware");
 
 // import express from "express";
 // import { likePost, unlikePost } from "../controllers/interactionController";

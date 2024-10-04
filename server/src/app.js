@@ -42,6 +42,9 @@ app.use(express.json({ limit: "10kb" })); // Limit payload size
 app.use(helmet()); // Security headers
 app.use(compression()); // GZIP compression
 
+// test the mongodb environment variable
+console.log(process.env.MONGO_URI); // this seems to be okay
+
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI, {

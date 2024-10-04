@@ -1,6 +1,6 @@
 const express = require("express");
 const { followUser, unfollowUser } = require("../controllers/followController");
-const { authenticate } = require("../middleware/authMiddleware");
+const authenticate = require("../middleware/authMiddleware");
 
 // import express from "express";
 // import { followUser, unfollowUser } from "../controllers/followController";

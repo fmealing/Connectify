@@ -8,7 +8,7 @@ const {
   getPosts,
   getPostsByUser,
 } = require("../controllers/postController");
-const { authenticate } = require("../middleware/authMiddleware");
+const authenticate = require("../middleware/authMiddleware");
 const { imageUploadMiddleware } = require("../controllers/imageController");
 
 // import express from "express";
