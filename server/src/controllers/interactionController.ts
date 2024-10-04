@@ -6,8 +6,8 @@ import { AuthenticatedRequest } from "../../@types/types";
 // Like a Post
 export const likePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user?._id; // Get the authenticated user's ID
-    const { postId } = req.body;
+    const userId: mongoose.Types.ObjectId | undefined = req.user?._id; // Get the authenticated user's ID
+    const { postId } = req.body as { postId: string };
 
     // Check if userId is available
     if (!userId) {
@@ -44,8 +44,8 @@ export const likePost = async (req: AuthenticatedRequest, res: Response) => {
 // Unlike a Post
 export const unlikePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user?._id; // Get the authenticated user's ID
-    const { postId } = req.body;
+    const userId: mongoose.Types.ObjectId | undefined = req.user?._id; // Get the authenticated user's ID
+    const { postId } = req.body as { postId: string };
 
     // Check if userId is available
     if (!userId) {

@@ -18,7 +18,11 @@ const bucket = storage.bucket("connectify-images");
 // Create a new post
 export const createPost = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { content, imageUrl, videoUrl } = req.body;
+    const { content, imageUrl, videoUrl } = req.body as {
+      content: string;
+      imageUrl?: string;
+      videoUrl?: string;
+    };
     const userId = req.user?.id; // Assume the user is authenticated
 
     if (!userId) {
@@ -97,7 +101,7 @@ export const editPost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { postId } = req.params;
     const userId = req.user?.id;
-    const { content } = req.body;
+    const { content } = req.body as { content: string };
 
     // Find the post by ID
     const post = await Post.findById(postId);

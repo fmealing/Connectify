@@ -10,7 +10,7 @@ export const createConversation = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { userIds } = req.body;
+  const { userIds } = req.body as { userIds: string[] };
 
   try {
     // Check if a conversation between these participants already exists
@@ -33,7 +33,11 @@ export const createConversation = async (
 
 // Send a message in a conversation
 export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
-  const { conversationId, senderId, content } = req.body;
+  const { conversationId, senderId, content } = req.body as {
+    conversationId: string;
+    senderId: string;
+    content: string;
+  };
 
   try {
     const message = new Message({
@@ -74,7 +78,7 @@ export const getConversationsById = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const userId = req.user?._id;
+  const userId: mongoose.Types.ObjectId | undefined = req.user?._id;
 
   if (!userId) {
     return res

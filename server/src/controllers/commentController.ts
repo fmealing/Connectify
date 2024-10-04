@@ -10,7 +10,11 @@ export const createComment = async (
   res: Response
 ) => {
   try {
-    const { postId, content, parentCommentId } = req.body;
+    const { postId, content, parentCommentId } = req.body as {
+      postId: string;
+      content: string;
+      parentCommentId?: string;
+    };
     const userId = req.user?._id; // Extract the user id from the request
 
     if (!userId) {

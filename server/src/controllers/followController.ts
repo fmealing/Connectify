@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import User from "../models/User";
 import { AuthenticatedRequest } from "../../@types/types";
+import { IUser } from "../models/User";
 
 // Follow a User
 export const followUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user?._id; // Current logged-in user
+    const userId: mongoose.Types.ObjectId | undefined = req.user?._id; // Current logged-in user's ObjectId
 
     if (!userId) {
       return res
@@ -16,7 +17,7 @@ export const followUser = async (req: AuthenticatedRequest, res: Response) => {
 
     const { followUserId } = req.body; // User to follow
 
-    if (userId.equals(new mongoose.Types.ObjectId(followUserId))) {
+    if (userId.equals(followUserId)) {
       return res.status(400).json({ message: "You cannot follow yourself" });
     }
 
@@ -36,7 +37,7 @@ export const followUser = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     // Add followUserId to user's following array
-    user.following.push(followUserId);
+    user.following.push(new mongoose.Types.ObjectId(followUserId));
     await user.save();
 
     // Add userId to followUser's followers array
@@ -45,10 +46,10 @@ export const followUser = async (req: AuthenticatedRequest, res: Response) => {
 
     return res.status(200).json({ message: "User followed successfully" });
   } catch (error) {
-    const err = error as Error;
-    return res
-      .status(500)
-      .json({ message: "Error following user", error: err.message });
+    return res.status(500).json({
+      message: "Error following user",
+      error: (error as Error).message,
+    });
   }
 };
 
@@ -58,7 +59,7 @@ export const unfollowUser = async (
   res: Response
 ) => {
   try {
-    const userId = req.user?._id; // Current logged-in user
+    const userId: mongoose.Types.ObjectId | undefined = req.user?._id; // Current logged-in user's ObjectId
 
     if (!userId) {
       return res
@@ -81,7 +82,7 @@ export const unfollowUser = async (
     }
 
     // Check if the user is already following the unfollowUser
-    if (!user.following.includes(unfollowUserId)) {
+    if (!user.following.includes(new mongoose.Types.ObjectId(unfollowUserId))) {
       return res
         .status(400)
         .json({ message: "You are not following this user" });
@@ -101,9 +102,9 @@ export const unfollowUser = async (
 
     return res.status(200).json({ message: "User unfollowed successfully" });
   } catch (error) {
-    const err = error as Error;
-    return res
-      .status(500)
-      .json({ message: "Error unfollowing user", error: err.message });
+    return res.status(500).json({
+      message: "Error unfollowing user",
+      error: (error as Error).message,
+    });
   }
 };

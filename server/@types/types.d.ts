@@ -5,4 +5,5 @@ export interface AuthenticatedRequest extends Request {
     id?: string;
     _id?: mongoose.Types.ObjectId; // For cases where you're using ObjectId
   };
+  file?: Express.Multer.File;
 }

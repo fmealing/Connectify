@@ -18,7 +18,12 @@ const bucket = storage.bucket("connectify-images");
 // User Registration (Sign Up)
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { fullName, email, username, password } = req.body;
+    const { fullName, email, username, password } = req.body as {
+      fullName: string;
+      email: string;
+      username: string;
+      password: string;
+    };
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -54,7 +59,7 @@ export const signup = async (req: Request, res: Response) => {
 // User Login
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as { email: string; password: string };
 
     // Check if the user exists in the database
     const user = await User.findOne({ email });
@@ -112,7 +117,7 @@ export const updateUserProfile = async (
   res: Response
 ) => {
   try {
-    const userId = req.user?.id; // Again, no need to cast
+    const userId = req.user?.id; // Extract the user id
 
     if (!userId) {
       return res
@@ -174,7 +179,17 @@ export const updateUserProfile = async (
 
 // Google Login
 export const googleLogin = async (req: Request, res: Response) => {
-  const { email, name, picture, sub: googleId } = req.body;
+  const {
+    email,
+    name,
+    picture,
+    sub: googleId,
+  } = req.body as {
+    email: string;
+    name: string;
+    picture: string;
+    sub: string;
+  };
 
   try {
     let user = await User.findOne({ $or: [{ email }, { googleId }] });
