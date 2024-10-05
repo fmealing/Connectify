@@ -38,7 +38,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: "10kb" })); // Limit payload size
+app.use(express.json({ limit: "10mb" })); // Limit payload size
 app.use(helmet()); // Security headers
 app.use(compression()); // GZIP compression
 
@@ -71,6 +71,17 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
+
+// console.log("imageRoutes: ", imageRoutes);
+
+// const {
+//   imageUploadMiddleware,
+//   uploadImage,
+// } = require("./controllers/imageController");
+
+// console.log("Image upload middleware: ", imageUploadMiddleware);
+// console.log("Upload image: ", uploadImage);
+
 app.use("/api/images", imageRoutes);
 
 // Serve static files from the React app

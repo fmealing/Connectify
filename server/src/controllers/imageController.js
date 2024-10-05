@@ -1,14 +1,24 @@
 const dotenv = require("dotenv");
 const { Storage } = require("@google-cloud/storage");
+const fs = require("fs");
+const path = require("path");
 const multer = require("multer");
 
 // Load environment variables
 dotenv.config();
 
-// Initialize Google Cloud Storage instance
+// Decode the base64 string and write to a temporary file
+const gcloudCredentialsPath = path.join(__dirname, "gcloud-temp.json");
+const base64Credentials = process.env.GCLOUD_CREDENTIALS_BASE64;
+fs.writeFileSync(
+  gcloudCredentialsPath,
+  Buffer.from(base64Credentials, "base64")
+);
+
+// Initialize Google Cloud Storage instance with the temp file
 const storage = new Storage({
   projectId: "sinuous-city-436905-u6",
-  keyFilename: "./sinuous-city-436905-u6-ad4e64da9e61.json",
+  keyFilename: gcloudCredentialsPath, // Use the temp file path
 });
 const bucket = storage.bucket("connectify-images");
 
@@ -35,15 +45,13 @@ const uploadImage = async (req, res) => {
     });
 
     blobStream.on("finish", async () => {
-      // Use the blob.name to correctly define the image URL
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
       res
         .status(200)
         .json({ message: "File uploaded successfully", url: publicUrl });
     });
 
-    blobStream.end(file.buffer); // Upload the image buffer to GCS
+    blobStream.end(file.buffer);
   } catch (error) {
     console.error("Error during upload: ", error);
     res
@@ -52,8 +60,7 @@ const uploadImage = async (req, res) => {
   }
 };
 
-// Export the multer middleware and uploadImage function for use in the routes
 module.exports = {
   uploadImage,
-  imageUploadMiddleware: upload.single("image"), // "image" is the field name in the form
+  imageUploadMiddleware: upload.single("image"),
 };
