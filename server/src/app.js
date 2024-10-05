@@ -42,9 +42,6 @@ app.use(express.json({ limit: "10mb" })); // Limit payload size
 app.use(helmet()); // Security headers
 app.use(compression()); // GZIP compression
 
-// test the mongodb environment variable
-console.log(process.env.MONGO_URI); // this seems to be okay
-
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -71,26 +68,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/interactions", interactionRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/conversations", messageRoutes);
-
-// console.log("imageRoutes: ", imageRoutes);
-
-// const {
-//   imageUploadMiddleware,
-//   uploadImage,
-// } = require("./controllers/imageController");
-
-// console.log("Image upload middleware: ", imageUploadMiddleware);
-// console.log("Upload image: ", uploadImage);
-
 app.use("/api/images", imageRoutes);
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../client/build")));
-
-// Catch-all route to serve React app
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
