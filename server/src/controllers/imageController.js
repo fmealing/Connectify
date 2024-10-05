@@ -8,7 +8,7 @@ dotenv.config();
 // Initialise Google Cloud Storage instance
 const storage = new Storage({
   projectId: "sinuous-city-436905-u6",
-  keyFilename: "./sinuous-city-436905-u6-ad4e64da9e61.json", // Direct reference to the credentials file
+  keyFilename: "./sinuous-city-436905-u6-dd35197fb5c0", // Direct reference to the credentials file
 });
 const bucket = storage.bucket("connectify-images");
 

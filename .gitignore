@@ -28,5 +28,4 @@ server/.env
 src/.env
 
 # Google Cloud data
-/server/sinuous-city-436905-u6-ad4e64da9e61.json
 .vercel
